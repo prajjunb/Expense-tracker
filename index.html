@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Expense Tracking Web-Application— Auth</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --accent:#6c5ce7; /* aesthetic purple */
+      --muted:#7f8fa6;
+      --bg:#ebeefe; /* soft lavender background */
+      --card:#ffffff;
+      --radius:12px;
+    }
+    html,body{
+      height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:var(--bg);color:#0b2340;
+    }
+    .wrap{max-width:960px;margin:18px auto;padding:14px}
+    .card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 10px 28px rgba(40,40,80,0.08);margin-bottom:14px}
+    h1{font-size:20px;margin:0 0 6px}
+    h2{font-size:16px;margin:0 0 8px}
+    p.lead{margin:0 0 10px;color:var(--muted);font-size:13px}
+    label{display:block;margin-top:10px;font-weight:600;font-size:13px;color:#0b2340}
+
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"]{
+      width:100%;padding:11px;border-radius:10px;border:1px solid #dfe4f5;margin-top:6px;font-size:15px;background:#f7f8ff;
+    }
+
+    .row{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+
+    .btn{
+      display:inline-block;background:var(--accent);color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer;
+      transition:0.25s;
+    }
+    .btn:hover {background:#5547c2;}
+
+    .btn.secondary{background:#f0f1ff;color:var(--muted)}
+
+    .small{font-size:13px;color:var(--muted);margin-top:8px}
+
+    .msg{margin-top:10px;padding:8px;border-radius:8px;font-size:14px}
+    .msg.error{background:#ffecec;color:#c0392b;border:1px solid #ffcdcd}
+    .msg.success{background:#46d1de;color:#0b6b3b;border:1px solid #d2f7e3}
+
+    .hidden{display:none}
+    .toggle-link{background:none;border:0;color:var(--muted);cursor:pointer;padding:0;font-size:13px}
+
+    .pw-meter{height:8px;border-radius:6px;background:#e4e6ff;margin-top:8px;overflow:hidden}
+    .pw-meter > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#ff4f4f,#7a5cff)}
+
+    @media (max-width:720px){ .wrap{padding:12px} h1{font-size:18px} }
+  </style>
+</head>
+<body>
+
+
+<script>
+  // single global currentKey to avoid duplicate redeclare issues
+  if (typeof window.__EXP_CURRENT_KEY__ === 'undefined') window.__EXP_CURRENT_KEY__ = 'currentUser';
+  const CURRENT_KEY = window.__EXP_CURRENT_KEY__;
+  const USERS_KEY = 'users';
+  const SALARY_KEY = 'salary';
+  // NOTE: This auth page will NOT auto-redirect to dashboard on load.
+  // If a valid currentUser exists you may click "Continue to dashboard" manually.
+</script>
+
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+    <div>
+      <h1>Expense Tracker</h1>
+      <p class="small">Create an account or sign in.</p>
+    </div>
+
+    <div>
+      <!-- Manual continue if already signed in (no auto-redirect) -->
+      <button id="continueBtn" class="btn secondary hidden">Continue to dashboard</button>
+    </div>
+  </div>
+
+  <!-- SIGN UP (visible by default) -->
+  <div class="card" id="signupCard">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2>Create account</h2>
+      <div>
+        <button class="toggle-link" id="showSignInBtn">Sign In</button>
+      </div>
+    </div>
+
+    <form id="signupForm" autocomplete="off" novalidate>
+      <label for="suName">Full name</label>
+      <input id="suName" type="text" placeholder="Your name" required />
+
+      <label for="suEmail">Email</label>
+      <input id="suEmail" type="email" placeholder="you@domain.com" required />
+
+      <label for="suPassword">Password</label>
+      <div style="position:relative">
+        <input id="suPassword" type="password" placeholder="At least 8 characters" required />
+        <button type="button" class="toggle-link" id="toggleSuPass" style="position:absolute;right:10px;top:12px">Show</button>
+      </div>
+
+      <label for="suConfirm">Confirm Password</label>
+      <div style="position:relative">
+        <input id="suConfirm" type="password" placeholder="Re-enter password" required />
+        <button type="button" class="toggle-link" id="toggleSuConfirm" style="position:absolute;right:10px;top:12px">Show</button>
+      </div>
+
+      <div class="pw-meter" aria-hidden><i id="suPwBar" style="width:0%"></i></div>
+      <div class="small">Password strength: <strong id="suPwStrength">—</strong></div>
+
+      <label for="suNote" style="margin-top:10px">Note (optional)</label>
+      <input id="suNote" type="text" placeholder="Optional note" />
+
+      <div class="row">
+        <button class="btn" type="submit">Sign up</button>
+        <button type="button" class="btn secondary" id="toSignInSmall">Already have an account? Sign in</button>
+      </div>
+
+      <div id="signupMsg" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <!-- SIGN IN (hidden until user requests it) -->
+  <div class="card hidden" id="signinCard">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2>Sign In</h2>
+      <div>
+        <button class="toggle-link" id="showSignUpBtn">Back to Sign Up</button>
+      </div>
+    </div>
+
+    <form id="signinForm" autocomplete="off" novalidate>
+      <label for="siEmail">Email</label>
+      <input id="siEmail" type="email" placeholder="you@domain.com" required />
+
+      <label for="siPassword">Password</label>
+      <div style="position:relative">
+        <input id="siPassword" type="password" placeholder="Your password" required />
+        <button type="button" class="toggle-link" id="toggleSiPass" style="position:absolute;right:10px;top:12px">Show</button>
+      </div>
+
+      <div class="row">
+        <button class="btn" type="submit">Sign in</button>
+        <button type="button" class="btn secondary" id="toSignUpSmall">Create new account</button>
+      </div>
+
+      <div id="signinMsg" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <!-- SALARY ENQUIRY (hidden; shown only after signup) -->
+  <div class="card hidden" id="salaryCard">
+    <h2>Quick salary info</h2>
+    <p class="lead">Enter your monthly salary (used for budgeting recommendations).</p>
+
+    <form id="salaryForm" autocomplete="off" novalidate>
+      <label for="salaryInput">Monthly salary (₹)</label>
+      <input id="salaryInput" type="number" min="0" step="0.01" placeholder="e.g., 25000" />
+
+      <div class="row" style="margin-top:12px">
+        <button class="btn" type="submit">Save & Continue</button>
+      </div>
+
+      <div id="salaryMsg" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <div class="small"></div>
+</div>
+
+<script>
+/* ======= helpers ======= */
+function getUsers(){
+  try { const raw = localStorage.getItem(USERS_KEY); return raw ? JSON.parse(raw) : []; }
+  catch(e){ console.warn(e); return []; }
+}
+function saveUsers(arr){ localStorage.setItem(USERS_KEY, JSON.stringify(arr)); }
+function setCurrent(user){ localStorage.setItem(CURRENT_KEY, JSON.stringify(user)); }
+function clearCurrent(){ localStorage.removeItem(CURRENT_KEY); }
+
+/* ======= refs ======= */
+const continueBtn = document.getElementById('continueBtn');
+
+const signupCard = document.getElementById('signupCard');
+const signinCard = document.getElementById('signinCard');
+const salaryCard = document.getElementById('salaryCard');
+
+const signupForm = document.getElementById('signupForm');
+const signinForm = document.getElementById('signinForm');
+const salaryForm = document.getElementById('salaryForm');
+
+const suName = document.getElementById('suName');
+const suEmail = document.getElementById('suEmail');
+const suPassword = document.getElementById('suPassword');
+const suConfirm = document.getElementById('suConfirm');
+const suNote = document.getElementById('suNote');
+
+const siEmail = document.getElementById('siEmail');
+const siPassword = document.getElementById('siPassword');
+
+const suPwBar = document.getElementById('suPwBar');
+const suPwStrength = document.getElementById('suPwStrength');
+
+const signupMsg = document.getElementById('signupMsg');
+const signinMsg = document.getElementById('signinMsg');
+const salaryMsg = document.getElementById('salaryMsg');
+
+/* ======= UI behavior ======= */
+document.getElementById('showSignInBtn').addEventListener('click', showSignIn);
+document.getElementById('toSignInSmall').addEventListener('click', showSignIn);
+document.getElementById('showSignUpBtn').addEventListener('click', showSignUp);
+document.getElementById('toSignUpSmall').addEventListener('click', showSignUp);
+
+function showSignIn(){
+  signupCard.classList.add('hidden');
+  salaryCard.classList.add('hidden');
+  signinCard.classList.remove('hidden');
+  setTimeout(()=> siEmail.focus(), 120);
+}
+function showSignUp(){
+  signinCard.classList.add('hidden');
+  salaryCard.classList.add('hidden');
+  signupCard.classList.remove('hidden');
+  setTimeout(()=> suName.focus(), 120);
+}
+function showSalaryFor(email){
+  sessionStorage.setItem('showSalaryFor', (email||'').toLowerCase());
+  signupCard.classList.add('hidden');
+  signinCard.classList.add('hidden');
+  salaryCard.classList.remove('hidden');
+  setTimeout(()=> document.getElementById('salaryInput').focus(), 120);
+}
+
+/* ======= password helpers ======= */
+function passwordStrength(pw){
+  let score = 0;
+  if (!pw) return {score:0,label:'Too short'};
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  let label='Very weak';
+  if (score <= 1) label='Weak';
+  else if (score === 2) label='Okay';
+  else if (score === 3) label='Good';
+  else label='Strong';
+  return {score,label};
+}
+suPassword.addEventListener('input', (e)=>{
+  const {score,label} = passwordStrength(e.target.value);
+  const pct = Math.min(100, (score/4)*100);
+  suPwBar.style.width = pct + '%';
+  if (score <= 1) suPwBar.style.background = 'linear-gradient(90deg,#ff6b6b,#ffb86b)';
+  else if (score === 2) suPwBar.style.background = 'linear-gradient(90deg,#ffb86b,#ffd86b)';
+  else if (score === 3) suPwBar.style.background = 'linear-gradient(90deg,#8bd46b,#b6e86b)';
+  else suPwBar.style.background = 'linear-gradient(90deg,#4ade80,#06b6d4)';
+  suPwStrength.innerText = label;
+});
+document.getElementById('toggleSuPass').addEventListener('click', ()=> togglePass('suPassword','toggleSuPass'));
+document.getElementById('toggleSuConfirm').addEventListener('click', ()=> togglePass('suConfirm','toggleSuConfirm'));
+document.getElementById('toggleSiPass').addEventListener('click', ()=> togglePass('siPassword','toggleSiPass'));
+function togglePass(inputId, toggleId){
+  const el = document.getElementById(inputId);
+  const t = document.getElementById(toggleId);
+  if (!el || !t) return;
+  if (el.type === 'password'){ el.type = 'text'; t.innerText = 'Hide'; }
+  else { el.type = 'password'; t.innerText = 'Show'; }
+}
+
+/* ======= form handlers ======= */
+function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+function showMessage(areaEl, type, text){ areaEl.innerHTML = `<div class="msg ${type==='error'?'error':'success'}">${text}</div>`; }
+
+/* Sign-up */
+signupForm.addEventListener('submit', (ev) => {
+  ev.preventDefault(); signupMsg.innerHTML = '';
+
+  const name = (suName.value || '').trim();
+  const email = (suEmail.value || '').trim().toLowerCase();
+  const password = suPassword.value || '';
+  const confirm = suConfirm.value || '';
+  const note = (suNote.value || '').trim();
+
+  if (!name) { showMessage(signupMsg,'error','Please enter your name.'); return; }
+  if (!email || !isValidEmail(email)) { showMessage(signupMsg,'error','Please enter a valid email.'); return; }
+  if (!password || password.length < 8) { showMessage(signupMsg,'error','Password must be at least 8 characters.'); return; }
+  if (password !== confirm) { showMessage(signupMsg,'error','Passwords do not match.'); return; }
+
+  const users = getUsers();
+  if (users.some(u => u.email && u.email.toLowerCase() === email)) {
+    showMessage(signupMsg,'error','An account with this email already exists. Please sign in.');
+    return;
+  }
+
+  const user = { id: Math.random().toString(36).slice(2), name, email, password, note, createdAt: new Date().toISOString() };
+  users.push(user);
+  saveUsers(users);
+
+  // set current user (object with id and email)
+  setCurrent({ id: user.id, email: user.email, name: user.name });
+
+  // show salary step for this signup
+  showSalaryFor(email);
+});
+
+/* Sign-in */
+signinForm.addEventListener('submit', (ev) => {
+  ev.preventDefault(); signinMsg.innerHTML = '';
+
+  const email = (siEmail.value || '').trim().toLowerCase();
+  const password = siPassword.value || '';
+
+  if (!email || !password) { showMessage(signinMsg,'error','Please enter email and password.'); return; }
+
+  const users = getUsers();
+  const user = users.find(u => u.email && u.email.toLowerCase() === email && u.password === password);
+  if (!user) { showMessage(signinMsg,'error','Invalid email or password.'); return; }
+
+  // success: set current and go to dashboard
+  setCurrent({ id: user.id, email: user.email, name: user.name });
+  showMessage(signinMsg,'success','Signed in. Redirecting to dashboard...');
+  setTimeout(()=> { location.href = 'dashboard.html'; }, 650);
+});
+
+/* Salary submit */
+salaryForm.addEventListener('submit', (ev) => {
+  ev.preventDefault(); salaryMsg.innerHTML = '';
+
+  const raw = document.getElementById('salaryInput').value;
+  const val = Number(raw);
+  if (!raw || isNaN(val) || val <= 0) { showMessage(salaryMsg,'error','Enter a valid salary amount (> 0).'); return; }
+
+  localStorage.setItem(SALARY_KEY, String(val));
+  sessionStorage.removeItem('showSalaryFor');
+  showMessage(salaryMsg,'success','Salary saved. Redirecting to dashboard...');
+  setTimeout(()=> { location.href = 'dashboard.html'; }, 650);
+});
+
+/* ======= init ======= */
+document.addEventListener('DOMContentLoaded', () => {
+  // ensure users array exists
+  const ru = localStorage.getItem(USERS_KEY);
+  if (!ru) saveUsers([]);
+  else {
+    try { const p = JSON.parse(ru); if (!Array.isArray(p)) saveUsers([]); }
+    catch(e){ saveUsers([]); }
+  }
+
+  // If a logged-in user exists, reveal "Continue to dashboard" (manual)
+  try {
+    const raw = localStorage.getItem(CURRENT_KEY);
+    if (raw) {
+      let cur = null;
+      try { cur = JSON.parse(raw); } catch(e){ cur = raw; }
+      const users = getUsers();
+      const match = users.find(u => {
+        if (!u) return false;
+        if (typeof cur === 'object' && cur.id) return u.id === cur.id;
+        if (typeof cur === 'object' && cur.email) return (u.email||'').toLowerCase() === (cur.email||'').toLowerCase();
+        if (typeof cur === 'string') return (u.email||'').toLowerCase() === cur.toLowerCase() || u.id === cur;
+        return false;
+      });
+      if (match) {
+        continueBtn.classList.remove('hidden');
+        continueBtn.onclick = () => { location.href = 'dashboard.html'; };
+      } else {
+        // invalid leftover - clear it
+        localStorage.removeItem(CURRENT_KEY);
+      }
+    }
+  } catch(e){ console.warn(e); localStorage.removeItem(CURRENT_KEY); }
+
+  // If session flag indicates we just signed up and salary not set, show salary
+  const sEmail = sessionStorage.getItem('showSalaryFor');
+  const savedSalary = localStorage.getItem(SALARY_KEY);
+  if (sEmail && !savedSalary) {
+    showSalaryFor(sEmail);
+    return;
+  }
+
+  // default: show sign up
+  showSignUp();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <title>Scan Bill — Expense Tracker</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Tesseract for OCR -->
+  <script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+  <!-- Your ML engine -->
+  <script src="receipt-ml-engine.js"></script>
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --accent: #3f67e6;
+      --accent-soft: #e0e7ff;
+      --accent-dark: #2949c0;
+      --danger: #ef4444;
+      --muted: #6b7280;
+      --text: #0b2340;
+      --text-soft: #9ca3af;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      --radius-lg: 18px;
+      --radius-sm: 10px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #020617;
+      --card: #0f172a;
+      --border: #1e293b;
+      --accent: #60a5fa;
+      --accent-soft: #0b1120;
+      --accent-dark: #2563eb;
+      --danger: #f97373;
+      --muted: #9ca3af;
+      --text: #e5e7eb;
+      --text-soft: #6b7280;
+      --shadow: 0 10px 40px rgba(15, 23, 42, 0.7);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, rgba(96,165,250,0.18), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(139,92,246,0.18), transparent 55%),
+                  var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 40px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    header h1 span {
+      font-size: 28px;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.12);
+      border: 1px solid rgba(148,163,184,0.25);
+      font-size: 13px;
+    }
+
+    .back-link:hover {
+      background: rgba(148,163,184,0.2);
+    }
+
+    .settings-pill {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .settings-pill span {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      padding: 18px 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(96,165,250,0.12), transparent 60%);
+      pointer-events: none;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chip {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .muted {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .video-box {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: radial-gradient(circle at center, rgba(15,23,42,0.4), rgba(15,23,42,0.9));
+      margin-top: 10px;
+      aspect-ratio: 1;
+      width: 100%;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      background: #000;
+    }
+</details>
+
+    .mirror-video {
+      transform: scaleX(-1);
+    }
+
+    .video-overlay-text {
+      position: absolute;
+      left: 12px;
+      bottom: 10px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.8);
+      color: #e5e7eb;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    .mode-tab {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all var(--transition);
+    }
+
+    .mode-tab.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .mode-content {
+      display: none;
+    }
+
+    .mode-content.active {
+      display: block;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition), color var(--transition);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: rgba(148,163,184,0.14);
+      color: var(--text);
+      box-shadow: none;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px dashed rgba(148,163,184,0.6);
+      box-shadow: none;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .status-pill {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: rgba(15,23,42,0.08);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .status-pill span {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 5px rgba(34,197,94,0.25);
+    }
+
+    .status-pill.error span {
+      background: var(--danger);
+      box-shadow: 0 0 0 5px rgba(248,113,113,0.25);
+    }
+
+    .badges-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .badge-soft {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.12);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-soft strong {
+      color: var(--accent);
+    }
+
+    .section-title {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .preview-box {
+      margin-top: 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.02);
+      padding: 10px 12px;
+      font-size: 13px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .preview-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .preview-row span.label {
+      color: var(--muted);
+    }
+
+    .preview-amount {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .preview-category {
+      font-weight: 600;
+    }
+
+    .chip-warning {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(250,204,21,0.12);
+      color: #facc15;
+      border: 1px solid rgba(234,179,8,0.4);
+    }
+
+    .moment-gallery {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+    }
+
+    .moment-item {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: #020617;
+      display: flex;
+      flex-direction: column;
+      min-height: 140px;
+    }
+
+    .moment-item img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .moment-meta {
+      padding: 6px 8px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .moment-actions {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .moment-actions button {
+      flex: 1;
+      border-radius: 999px;
+      border: 0;
+      font-size: 10px;
+      padding: 4px 0;
+      cursor: pointer;
+      background: rgba(148,163,184,0.18);
+      color: var(--text);
+    }
+
+    .moment-actions button.primary {
+      background: rgba(96,165,250,0.2);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .currency-pill {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.12);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <a class="back-link" href="dashboard.html">← Back to Dashboard</a>
+      <h1><span>📷</span> Scan & Capture</h1>
+    </div>
+    <div class="settings-pill">
+      Theme: <span id="themeLabel">Light</span> · Currency: <span id="currencyLabel">INR</span>
+    </div>
+  </header>
+
+  <!-- ============ COMBINED CARD: BILL + MOMENT ============ -->
+  <section class="card">
+    <!-- MODE TABS -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="switchMode('bill')">🧾 Capture Bill</button>
+      <button class="mode-tab" onclick="switchMode('moment')">✨ Capture Moment</button>
+    </div>
+
+    <!-- ============ BILL MODE ============ -->
+    <div id="billMode" class="mode-content active">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🧾 Capture Bill <span class="chip">Bill mode</span></div>
+          <div class="muted"></div>
+        </div>
+        <div class="currency-pill">
+          Currency: <strong id="billCurrencyDisplay">INR</strong>
+        </div>
+      </div>
+
+      <div class="video-box">
+        <video id="billVideo" autoplay playsinline></video>
+        <div class="video-overlay-text">
+          <span id="billCameraInfo">Camera: not started</span>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <button class="btn btn-primary" id="startBillBtn">▶ Start Bill Camera</button>
+        <button class="btn btn-secondary" id="switchBillCamBtn">🔄 Switch Camera</button>
+        <button class="btn btn-secondary" id="captureBillBtn">📸 Capture Bill</button>
+        <button class="btn btn-secondary" id="importBillLabel">📁 Import Bill</button>
+        <input type="file" id="importBillFile" accept="image/*" />
+      </div>
+</details>
+
+      <div class="status-pill" id="billStatus">
+        <span></span>Camera not started yet.
+      </div>
+
+      <div class="section-title">Extracted result</div>
+      <div class="preview-box" id="billPreview">
+        <div class="muted">No bill processed yet. Capture a bill to see amount, category & text.</div>
+      </div>
+
+      <div class="controls-row" style="margin-top: 10px;">
+        <button class="btn btn-primary" id="saveBillToExpensesBtn" disabled>💾 Save to Expenses</button>
+        <button class="btn btn-ghost" id="clearBillPreviewBtn">Clear</button>
+      </div>
+    </div>
+
+    <!-- ============ MOMENT MODE (MIRRORED) ============ -->
+    <div id="momentMode" class="mode-content">
+      <div class="card-header">
+        <div>
+          <div class="card-title">✨ Capture the Moment <span class="chip">Mirrored</span></div>
+          <div class="muted"></div>
+        </div>
+      </div>
+
+      <div class="video-box">
+        <video id="momentVideo" autoplay playsinline></video>
+        <div class="video-overlay-text">
+          <span id="momentCameraInfo">Camera: not started</span>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <button class="btn btn-primary" id="startMomentBtn">▶ Start Moment Camera</button>
+        <button class="btn btn-secondary" id="switchMomentCamBtn">🔄 Change Camera</button>
+        <button class="btn btn-secondary" id="captureMomentBtn">📸 Capture the Moment</button>
+      </div>
+
+      <div class="badges-row">
+        <div class="badge-soft"><strong>Mirror ON</strong> · Applies only to Capture the Moment (front & back)</div>
+        <div class="badge-soft">Bill mode uses <strong>rear camera</strong> (no mirror)</div>
+      </div>
+
+      <div class="section-title">Saved moments</div>
+      <div class="preview-box" style="max-height:none;">
+        <div class="moment-gallery" id="momentGallery"></div>
+        <div id="noMomentsText" class="muted">No moments yet. Capture one to save it in this device.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CANVAS (hidden) -->
+  <canvas id="captureCanvas" style="display:none;"></canvas>
+</div>
+
+<script>
+  // =====================================================
+  // SETTINGS / THEME / CURRENCY
+  // =====================================================
+  const SETTINGS_KEY = "userSettings";
+  const EXPENSES_KEY = "userExpenses";
+  const MOMENTS_KEY = "scanBillMoments";
+
+  const CURRENCY_SYMBOLS = {
+    INR: "₹",
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    JPY: "¥",
+    AUD: "A$",
+    CAD: "C$"
+  };
+
+  function getSettings() {
+    try {
+      return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  function applySettingsToPage() {
+    const settings = getSettings();
+    const theme = settings.theme === "dark" ? "dark" : "light";
+    const currency = settings.currency || "INR";
+
+    document.documentElement.setAttribute("data-theme", theme);
+    document.getElementById("themeLabel").innerText = theme === "dark" ? "Dark" : "Light";
+    document.getElementById("currencyLabel").innerText = currency;
+    document.getElementById("billCurrencyDisplay").innerText = currency;
+  }
+
+  applySettingsToPage();
+
+  function getActiveCurrency() {
+    const settings = getSettings();
+    return settings.currency || "INR";
+  }
+
+  function getCurrencySymbol() {
+    const c = getActiveCurrency();
+    return CURRENCY_SYMBOLS[c] || c + " ";
+  }
+
+  // =====================================================
+  // MODE SWITCHING
+  // =====================================================
+  function switchMode(mode) {
+    const tabs = document.querySelectorAll(".mode-tab");
+    const contents = document.querySelectorAll(".mode-content");
+
+    tabs.forEach((tab, idx) => {
+      tab.classList.remove("active");
+      if ((idx === 0 && mode === "bill") || (idx === 1 && mode === "moment")) {
+        tab.classList.add("active");
+      }
+    });
+
+    contents.forEach(content => content.classList.remove("active"));
+    if (mode === "bill") {
+      document.getElementById("billMode").classList.add("active");
+    } else {
+      document.getElementById("momentMode").classList.add("active");
+    }
+  }
+
+  window.switchMode = switchMode;
+
+  // =====================================================
+  // STORAGE MANAGER
+  // =====================================================
+  class StorageManager {
+    static loadExpenses() {
+      try {
+        return JSON.parse(localStorage.getItem(EXPENSES_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    static saveExpenses(list) {
+      localStorage.setItem(EXPENSES_KEY, JSON.stringify(list));
+    }
+
+    static addExpense(expense) {
+      const list = this.loadExpenses();
+      list.push(expense);
+      this.saveExpenses(list);
+    }
+
+    static loadMoments() {
+      try {
+        return JSON.parse(localStorage.getItem(MOMENTS_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    static saveMoments(list) {
+      localStorage.setItem(MOMENTS_KEY, JSON.stringify(list));
+    }
+  }
+
+  // =====================================================
+  // CAMERA SETUP
+  // =====================================================
+  let currentStream = null;
+  let activeMode = null;
+  let billFacingMode = "environment";
+  let momentFacingMode = "user";
+
+  const billVideo = document.getElementById("billVideo");
+  const momentVideo = document.getElementById("momentVideo");
+  const billCameraInfo = document.getElementById("billCameraInfo");
+  const momentCameraInfo = document.getElementById("momentCameraInfo");
+  const billStatus = document.getElementById("billStatus");
+
+  async function stopCurrentStream() {
+    if (currentStream) {
+      currentStream.getTracks().forEach(t => t.stop());
+      currentStream = null;
+    }
+  }
+
+  async function startCamera(mode) {
+    try {
+      await stopCurrentStream();
+      activeMode = mode;
+
+      const facingMode = mode === "bill" ? billFacingMode : momentFacingMode;
+
+      const constraints = {
+        audio: false,
+        video: {
+          facingMode: facingMode
+        }
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      currentStream = stream;
+
+      if (mode === "bill") {
+        billVideo.srcObject = stream;
+        momentVideo.srcObject = null;
+        billVideo.classList.remove("mirror-video");
+        billCameraInfo.innerText = "Camera: " + (facingMode === "user" ? "Front" : "Back");
+        billStatus.classList.remove("error");
+        billStatus.innerHTML = '<span></span> Camera active. Point at the bill & tap "Capture Bill".';
+      } else {
+        momentVideo.srcObject = stream;
+        billVideo.srcObject = null;
+        momentVideo.classList.add("mirror-video");
+        momentCameraInfo.innerText = "Camera: " + (facingMode === "user" ? "Front (mirrored)" : "Back (mirrored)");
+      }
+    } catch (err) {
+      console.error("Camera error:", err);
+      if (mode === "bill") {
+        billStatus.classList.add("error");
+        billStatus.innerHTML = '<span></span> Cannot access camera. Check permissions.';
+      } else {
+        momentCameraInfo.innerText = "Camera error. Check permissions.";
+      }
+    }
+  }
+
+  function switchBillCamera() {
+    billFacingMode = (billFacingMode === "environment") ? "user" : "environment";
+    if (activeMode === "bill") startCamera("bill");
+  }
+
+  function switchMomentCamera() {
+    momentFacingMode = (momentFacingMode === "environment") ? "user" : "environment";
+    if (activeMode === "moment") startCamera("moment");
+  }
+
+  // =====================================================
+  // BILL CAPTURE + OCR
+  // =====================================================
+  const canvas = document.getElementById("captureCanvas");
+  const billPreview = document.getElementById("billPreview");
+  const saveBillBtn = document.getElementById("saveBillToExpensesBtn");
+  const clearBillPreviewBtn = document.getElementById("clearBillPreviewBtn");
+
+  let lastBillResult = null;
+
+  function setBillPreviewLoading() {
+    billPreview.innerHTML = `
+      <div class="muted">Processing receipt with OCR...</div>
+      <div class="status-pill" style="margin-top:6px;">
+        <span></span> This may take a few seconds depending on image quality.
+      </div>
+    `;
+  }
+
+  function renderBillPreview(result) {
+    if (!result) {
+      billPreview.innerHTML = `<div class="muted">No bill data yet.</div>`;
+      saveBillBtn.disabled = true;
+      return;
+    }
+
+    const symbol = getCurrencySymbol();
+    const amountStr = result.amount != null ? symbol + result.amount.toLocaleString("en-IN") : "—";
+    const categoryStr = result.category || "Unknown";
+
+    const warn = (!result.category || result.categoryConfidence < 0.5 || !result.amount);
+    const warnHtml = warn
+      ? `<span class="chip-warning">Low confidence — please double-check before saving.</span>`
+      : "";
+
+    billPreview.innerHTML = `
+      <div class="preview-row">
+        <span class="label">Amount:</span>
+        <span class="preview-amount">${amountStr}</span>
+      </div>
+      <div class="preview-row">
+        <span class="label">Category:</span>
+        <span class="preview-category">${categoryStr}</span>
+      </div>
+      <div class="preview-row">
+        <span class="label">Confidence:</span>
+        <span>${(result.categoryConfidence * 100).toFixed(1)}% (category), ${(result.amountConfidence * 100).toFixed(1)}% (amount)</span>
+      </div>
+      <div style="margin-top:6px;">${warnHtml}</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-soft);">
+        <strong>Detected Text (snippet):</strong><br/>
+        ${result.rawText.slice(0, 350).replace(/</g,"&lt;").replace(/>/g,"&gt;")}...
+      </div>
+    `;
+
+    saveBillBtn.disabled = false;
+  }
+
+  async function captureBillAndProcess() {
+    if (!currentStream || activeMode !== "bill") {
+      billStatus.classList.add("error");
+      billStatus.innerHTML = '<span></span> Start the Bill Camera first.';
+      return;
+    }
+
+    try {
+      const video = billVideo;
+      const width = video.videoWidth || 640;
+      const height = video.videoHeight || 480;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, width, height);
+
+      setBillPreviewLoading();
+
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+
+      const { data: { text } } = await Tesseract.recognize(dataUrl, "eng", {
+        logger: m => console.log("Tesseract:", m)
+      });
+
+      const cleanText = (text || "").trim();
+      if (!cleanText) {
+        billPreview.innerHTML = `<div class="muted">Unable to read text from this image. Try again with clearer bill.</div>`;
+        saveBillBtn.disabled = true;
+        return;
+      }
+
+      const engine = new ReceiptMLEngine();
+      const mlResult = engine.processReceipt(cleanText);
+
+      let finalCategory = mlResult.category;
+      let finalCategoryConfidence = mlResult.categoryConfidence;
+
+      if (!finalCategory && mlResult.rawScores) {
+        let bestKey = null;
+        let bestScore = 0;
+        for (const [key, score] of Object.entries(mlResult.rawScores)) {
+          if (score > bestScore) {
+            bestScore = score;
+            bestKey = key;
+          }
+        }
+        if (bestKey) {
+          const map = {
+            food: "Food",
+            medical: "Medical",
+            shopping: "Shopping",
+            education: "Education",
+            travel: "Travel",
+            rent: "Rent"
+          };
+          finalCategory = map[bestKey] || "Other";
+          finalCategoryConfidence = Math.max(finalCategoryConfidence, bestScore / 100);
+        }
+      }
+
+      const lower = cleanText.toLowerCase();
+      const foodHits = (lower.match(/\b(food|restaurant|hotel|cafe|biryani|thali|pizza|burger|swiggy|zomato)\b/g) || []).length;
+      if (foodHits >= 2) {
+        finalCategory = "Food";
+        finalCategoryConfidence = Math.max(finalCategoryConfidence, 0.8);
+      }
+
+      const result = {
+        rawText: cleanText,
+        amount: mlResult.amount,
+        amountConfidence: mlResult.amountConfidence || 0,
+        category: finalCategory,
+        categoryConfidence: finalCategoryConfidence || 0,
+        currency: getActiveCurrency()
+      };
+
+      lastBillResult = result;
+      renderBillPreview(result);
+    } catch (err) {
+      console.error("Bill capture error:", err);
+      billPreview.innerHTML = `<div class="muted">Error processing bill. Try again.</div>`;
+      saveBillBtn.disabled = true;
+    }
+  }
+
+  function clearBillPreview() {
+    lastBillResult = null;
+    renderBillPreview(null);
+  }
+
+  function saveBillToExpenses() {
+    if (!lastBillResult || !lastBillResult.amount || !lastBillResult.category) {
+      alert("No valid bill to save. Capture and process a bill first.");
+      return;
+    }
+
+    const currency = lastBillResult.currency || getActiveCurrency();
+    const expense = {
+      id: Date.now(),
+      amount: lastBillResult.amount,
+      category: lastBillResult.category,
+      note: "Scanned bill (" + currency + ")",
+      date: new Date().toISOString(),
+      currency: currency
+    };
+
+    StorageManager.addExpense(expense);
+    alert("✓ Saved to Recent Expenses in add-expense.html");
+  }
+
+  // =====================================================
+  // IMPORT BILL FROM FILE
+  // =====================================================
+  async function processImportedBill(file) {
+    try {
+      billStatus.classList.remove("error");
+      billStatus.innerHTML = '<span></span> Processing imported bill...';
+      setBillPreviewLoading();
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const dataUrl = e.target.result;
+
+          const { data: { text } } = await Tesseract.recognize(dataUrl, "eng", {
+            logger: m => console.log("Tesseract:", m)
+          });
+
+          const cleanText = (text || "").trim();
+          if (!cleanText) {
+            billPreview.innerHTML = `<div class="muted">Unable to read text from this image. Try a clearer image.</div>`;
+            saveBillBtn.disabled = true;
+            return;
+          }
+
+          const engine = new ReceiptMLEngine();
+          const mlResult = engine.processReceipt(cleanText);
+
+          let finalCategory = mlResult.category;
+          let finalCategoryConfidence = mlResult.categoryConfidence;
+
+          if (!finalCategory && mlResult.rawScores) {
+            let bestKey = null;
+            let bestScore = 0;
+            for (const [key, score] of Object.entries(mlResult.rawScores)) {
+              if (score > bestScore) {
+                bestScore = score;
+                bestKey = key;
+              }
+            }
+            if (bestKey) {
+              const map = {
+                food: "Food",
+                medical: "Medical",
+                shopping: "Shopping",
+                education: "Education",
+                travel: "Travel",
+                rent: "Rent"
+              };
+              finalCategory = map[bestKey] || "Other";
+              finalCategoryConfidence = Math.max(finalCategoryConfidence, bestScore / 100);
+            }
+          }
+
+          const lower = cleanText.toLowerCase();
+          const foodHits = (lower.match(/\b(food|restaurant|hotel|cafe|biryani|thali|pizza|burger|swiggy|zomato)\b/g) || []).length;
+          if (foodHits >= 2) {
+            finalCategory = "Food";
+            finalCategoryConfidence = Math.max(finalCategoryConfidence, 0.8);
+          }
+
+          const result = {
+            rawText: cleanText,
+            amount: mlResult.amount,
+            amountConfidence: mlResult.amountConfidence || 0,
+            category: finalCategory,
+            categoryConfidence: finalCategoryConfidence || 0,
+            currency: getActiveCurrency()
+          };
+
+          lastBillResult = result;
+          renderBillPreview(result);
+          billStatus.classList.remove("error");
+          billStatus.innerHTML = '<span></span> Bill imported & processed successfully.';
+        } catch (err) {
+          console.error("Import processing error:", err);
+          billPreview.innerHTML = `<div class="muted">Error processing imported bill. Try again.</div>`;
+          saveBillBtn.disabled = true;
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("Import error:", err);
+      billStatus.classList.add("error");
+      billStatus.innerHTML = '<span></span> Error importing bill file.';
+    }
+  }
+
+  document.getElementById("importBillLabel").addEventListener("click", () => {
+    document.getElementById("importBillFile").click();
+  });
+
+  document.getElementById("importBillFile").addEventListener("change", (e) => {
+    if (e.target.files && e.target.files[0]) {
+      processImportedBill(e.target.files[0]);
+    }
+  });
+
+  // =====================================================
+  // CAPTURE THE MOMENT + GALLERY
+  // =====================================================
+  const momentGallery = document.getElementById("momentGallery");
+  const noMomentsText = document.getElementById("noMomentsText");
+
+  function renderMoments() {
+    const moments = StorageManager.loadMoments();
+    momentGallery.innerHTML = "";
+    if (!moments.length) {
+      noMomentsText.style.display = "block";
+      return;
+    }
+    noMomentsText.style.display = "none";
+
+    moments
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .forEach(m => {
+        const d = new Date(m.createdAt);
+        const dateStr = d.toLocaleDateString("en-IN");
+        const timeStr = d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+
+        const div = document.createElement("div");
+        div.className = "moment-item";
+        div.innerHTML = `
+          <img src="${m.dataUrl}" alt="Moment" />
+          <div class="moment-meta">
+            <div>${dateStr} · ${timeStr}</div>
+            <div class="moment-actions">
+              <button class="primary" onclick="downloadMoment('${m.id}','jpg')">JPG</button>
+              <button onclick="downloadMoment('${m.id}','png')">PNG</button>
+              <button onclick="downloadMoment('${m.id}','pdf')">PDF</button>
+            </div>
+          </div>
+        `;
+        momentGallery.appendChild(div);
+      });
+  }
+
+  function captureMoment() {
+    if (!currentStream || activeMode !== "moment") {
+      alert("Start the Moment Camera first.");
+      return;
+    }
+
+    const video = momentVideo;
+    const width = video.videoWidth || 640;
+    const height = video.videoHeight || 480;
+
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+
+    ctx.save();
+    ctx.translate(width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, width, height);
+    ctx.restore();
+
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+    const moments = StorageManager.loadMoments();
+    moments.push({
+      id: String(Date.now()),
+      dataUrl,
+      createdAt: Date.now()
+    });
+    StorageManager.saveMoments(moments);
+    renderMoments();
+  }
+
+  function downloadMoment(id, format) {
+    const moments = StorageManager.loadMoments();
+    const m = moments.find(x => x.id === id);
+    if (!m) return;
+
+    if (format === "jpg" || format === "png") {
+      const link = document.createElement("a");
+      link.href = m.dataUrl;
+      link.download = "moment-" + id + "." + format;
+      link.click();
+    } else if (format === "pdf") {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgProps = pdf.getImageProperties(m.dataUrl);
+      const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(m.dataUrl, "JPEG", 10, 10, pdfWidth, pdfHeight);
+      pdf.save("moment-" + id + ".pdf");
+    }
+  }
+
+  window.downloadMoment = downloadMoment;
+
+  // =====================================================
+  // EVENT BINDINGS
+  // =====================================================
+  document.getElementById("startBillBtn").addEventListener("click", () => startCamera("bill"));
+  document.getElementById("switchBillCamBtn").addEventListener("click", switchBillCamera);
+  document.getElementById("captureBillBtn").addEventListener("click", captureBillAndProcess);
+  document.getElementById("saveBillToExpensesBtn").addEventListener("click", saveBillToExpenses);
+  document.getElementById("clearBillPreviewBtn").addEventListener("click", clearBillPreview);
+
+  document.getElementById("startMomentBtn").addEventListener("click", () => startCamera("moment"));
+  document.getElementById("switchMomentCamBtn").addEventListener("click", switchMomentCamera);
+  document.getElementById("captureMomentBtn").addEventListener("click", captureMoment);
+
+  // INITIALIZE
+  renderMoments();
+</script>
+</body>
+</html>

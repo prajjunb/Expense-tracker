@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scan Receipt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 30px;
+    }
+
+    .box {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      margin-top: 15px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 18px;
+      font-size: 16px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+    }
+
+    .status {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>📷 Scan Receipt</h2>
+
+  <input type="file" id="receiptImage" accept="image/*">
+
+  <br>
+  <button id="scanBtn">Scan Bill</button>
+
+  <div class="status" id="status"></div>
+</div>
+
+<!-- OCR -->
+<script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+
+<!-- ML Engine -->
+<script src="receipt-ml-engine.js"></script>
+
+<script>
+  const scanBtn = document.getElementById('scanBtn');
+  const statusEl = document.getElementById('status');
+
+  const mlEngine = new ReceiptMLEngine();
+
+  scanBtn.addEventListener('click', async () => {
+    const fileInput = document.getElementById('receiptImage');
+    const file = fileInput.files[0];
+
+    if (!file) {
+      alert('Please upload a receipt image');
+      return;
+    }
+
+    scanBtn.disabled = true;
+    statusEl.innerText = '🔍 Reading receipt text...';
+
+    try {
+      const { data: { text } } = await Tesseract.recognize(file, 'eng');
+
+      statusEl.innerText = '🧠 Analyzing receipt...';
+
+      const result = mlEngine.processReceipt(text);
+
+      if (!result.amount || !result.category) {
+        alert('Could not confidently extract amount or category');
+        scanBtn.disabled = false;
+        return;
+      }
+
+      // Save for add-expense.html
+      localStorage.setItem('scannedExpense', JSON.stringify({
+        amount: result.amount,
+        category: result.category,
+        confidence: {
+          category: result.categoryConfidence,
+          amount: result.amountConfidence
+        },
+        scannedAt: new Date().toISOString()
+      }));
+
+      // Go to add expense
+      window.location.href = 'add-expense.html';
+
+    } catch (err) {
+      console.error(err);
+      alert('Failed to scan receipt');
+      scanBtn.disabled = false;
+    }
+  });
+  
+</script>
+
+</body>
+</html>

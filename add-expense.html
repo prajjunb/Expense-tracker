@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Add Expense — Expense Tracker</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --accent: #3f67e6;
+      --accent-dark: #2949c0;
+      --accent-light: #eef2ff;
+      --danger: #ff6b6b;
+      --success: #0b6e4f;
+      --muted: #6b7280;
+      --bg: #f5f7fb;
+      --card: #fff;
+      --border: #e6e9ef;
+      --radius: 12px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: #0b2340;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 32px;
+      font-weight: 700;
+      color: #0b2340;
+    }
+
+    a.link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 14px;
+      color: #0b2340;
+    }
+
+    input[type=number],
+    input[type=text],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      margin-top: 8px;
+      font-size: 16px;
+      font-family: inherit;
+      color: #0b2340;
+      transition: all var(--transition);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(63, 103, 230, 0.1);
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%233f67e6' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: 0;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 15px;
+      min-height: 44px;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn:active {
+      background: var(--accent-dark);
+      transform: scale(0.96);
+    }
+
+    .btn.secondary {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .btn.secondary:active {
+      background: #dde5ff;
+    }
+
+    .btn.danger {
+      background: #ffebe9;
+      color: #c53030;
+    }
+
+    .btn.danger:active {
+      background: #ffe0db;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(20, 30, 60, 0.08);
+      margin-bottom: 16px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .row button {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    h3 {
+      font-size: 20px;
+      margin: 0 0 12px;
+      color: #0b2340;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th {
+      background: linear-gradient(135deg, #f9fbff 0%, #f5f9ff 100%);
+      padding: 12px;
+      text-align: left;
+      font-weight: 700;
+      color: #0b2340;
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      color: #0b2340;
+    }
+
+    tbody tr:hover {
+      background: rgba(63, 103, 230, 0.03);
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .month-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .month-btn {
+      background: var(--accent-light);
+      color: var(--accent);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all var(--transition);
+    }
+
+    .month-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .kpi {
+      background: linear-gradient(135deg, #f9fbff 0%, #f5f9ff 100%);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid var(--accent-light);
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi div:first-child {
+      font-weight: 700;
+      font-size: 20px;
+      margin: 4px 0;
+      color: #0b2340;
+    }
+
+    .kpi .muted {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .category-input-container {
+      position: relative;
+    }
+
+    .category-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1.5px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 12px rgba(20, 30, 60, 0.08);
+    }
+
+    .category-suggestions.show {
+      display: block;
+    }
+
+    .suggestion-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: background-color var(--transition);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .suggestion-item:hover {
+      background-color: var(--accent-light);
+    }
+
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+
+    .suggestion-item.add-new {
+      background: linear-gradient(135deg, #f9fbff 0%, #f5f9ff 100%);
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    @media (max-width: 480px) {
+      .wrap {
+        padding: 12px;
+      }
+
+      .card-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .row {
+        flex-direction: column;
+      }
+
+      .row button {
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💰 Add Expense</h1>
+  <a class="link" href="dashboard.html">← Back to Dashboard</a>
+
+  <!-- Input Card -->
+  <div class="card" style="margin-top: 12px;">
+    <label>Amount (₹)</label>
+    <input id="amt" type="number" placeholder="0" inputmode="decimal" />
+
+    <label style="margin-top: 10px;">Category</label>
+    <div class="category-input-container">
+      <input id="cat" type="text" placeholder="Type or select category" autocomplete="off" />
+      <div class="category-suggestions" id="categorySuggestions"></div>
+    </div>
+
+    <label style="margin-top: 10px;">Note (Optional)</label>
+    <textarea id="note" placeholder="Add a note..."></textarea>
+
+    <div class="row" style="margin-top: 16px;">
+      <button class="btn" onclick="saveExpense()">✓ Save Expense</button>
+      <button class="btn secondary" onclick="clearForm()">Clear</button>
+    </div>
+  </div>
+
+  <!-- Highest Expenses KPI -->
+  <h3>💰 Highest Expenses</h3>
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="small">This Month</div>
+      <div id="highestThisMonth">₹0</div>
+      <div class="muted" id="highestThisMonthLabel">—</div>
+    </div>
+    <div class="kpi">
+      <div class="small">Last 3 Months</div>
+      <div id="highestThreeMonths">₹0</div>
+      <div class="muted" id="highestThreeMonthsLabel">—</div>
+    </div>
+  </div>
+
+  <!-- Recent Expenses -->
+  <h3>📋 Recent Expenses</h3>
+  
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="small">Toggle between current and last month</div>
+      </div>
+      <div class="month-toggle">
+        <button class="month-btn active" id="currentMonthBtn" onclick="toggleMonth('current')">📅 Current Month</button>
+        <button class="month-btn" id="lastMonthBtn" onclick="toggleMonth('last')">📅 Last Month</button>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Sl.</th>
+          <th>Category</th>
+          <th>Amount (₹)</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="expenseTableBody">
+        <tr style="text-align: center;">
+          <td colspan="6" style="padding: 20px; color: var(--muted);">No expenses yet</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // ============================================
+  // AUTHENTICATION CHECK
+  // ============================================
+  const CURRENT_KEY = 'currentUser';
+  if (!localStorage.getItem(CURRENT_KEY)) {
+    window.location.href = 'index.html';
+  }
+
+  // ============================================
+  // STORAGE KEYS
+  // ============================================
+  const EXPENSES_KEY = 'userExpenses';
+  const CATEGORIES_KEY = 'userCategories';
+  const DEFAULT_CATEGORIES = ['Food', 'Rent', 'Travel', 'Vehicle loan', 'Home loan', 'Education', 'Entertainment', 'Shopping', 'Utilities', 'Other'];
+  
+  let currentMonthFilter = 'current';
+
+  // ============================================
+  // STORAGE MANAGER - LocalStorage Operations
+  // ============================================
+  
+  class StorageManager {
+    static saveExpense(expense) {
+      try {
+        let expenses = JSON.parse(localStorage.getItem(EXPENSES_KEY)) || [];
+        expenses.push(expense);
+        localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
+        return true;
+      } catch (error) {
+        console.error('Error saving expense:', error);
+        throw error;
+      }
+    }
+
+    static loadExpenses() {
+      try {
+        return JSON.parse(localStorage.getItem(EXPENSES_KEY)) || [];
+      } catch (e) {
+        console.error('Error loading expenses:', e);
+        return [];
+      }
+    }
+
+    static getCategories() {
+      try {
+        return JSON.parse(localStorage.getItem(CATEGORIES_KEY)) || DEFAULT_CATEGORIES;
+      } catch (error) {
+        console.error('Error getting categories:', error);
+        return DEFAULT_CATEGORIES;
+      }
+    }
+
+    static saveCategory(category) {
+      try {
+        const categories = this.getCategories();
+        if (!categories.includes(category)) {
+          categories.push(category);
+          localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+        }
+        return true;
+      } catch (error) {
+        console.error('Error saving category:', error);
+        return false;
+      }
+    }
+
+    static deleteExpense(expenseId) {
+      try {
+        let expenses = JSON.parse(localStorage.getItem(EXPENSES_KEY)) || [];
+        expenses = expenses.filter(exp => exp.id !== expenseId);
+        localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
+        return true;
+      } catch (error) {
+        console.error('Error deleting expense:', error);
+        return false;
+      }
+    }
+  }
+
+  // ============================================
+  // UI FUNCTIONS
+  // ============================================
+
+  function saveExpense() {
+    console.log('Save Expense clicked');
+    const amount = Number(document.getElementById('amt').value);
+    const category = document.getElementById('cat').value.trim();
+    const note = document.getElementById('note').value;
+
+    console.log('Amount:', amount, 'Category:', category);
+
+    if (!amount || amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+
+    if (!category) {
+      alert('Please select or enter a category');
+      return;
+    }
+
+    try {
+      StorageManager.saveCategory(category);
+
+      const expense = {
+        id: Date.now(),
+        amount,
+        category,
+        note,
+        date: new Date().toISOString()
+      };
+
+      console.log('Expense object:', expense);
+      const saved = StorageManager.saveExpense(expense);
+      console.log('Saved:', saved);
+
+      clearForm();
+      loadExpenses(currentMonthFilter);
+      updateHighestExpenses();
+      alert('✓ Expense saved successfully!');
+    } catch (error) {
+      console.error('Error saving expense:', error);
+      alert('Error saving expense. Please try again.');
+    }
+  }
+
+  function clearForm() {
+    document.getElementById('amt').value = '';
+    document.getElementById('cat').value = '';
+    document.getElementById('note').value = '';
+    hideCategorySuggestions();
+  }
+
+  function toggleMonth(period) {
+    currentMonthFilter = period;
+    
+    const currentBtn = document.getElementById('currentMonthBtn');
+    const lastBtn = document.getElementById('lastMonthBtn');
+
+    if (period === 'current') {
+      currentBtn.classList.add('active');
+      lastBtn.classList.remove('active');
+    } else {
+      currentBtn.classList.remove('active');
+      lastBtn.classList.add('active');
+    }
+
+    loadExpenses(period);
+  }
+
+  function loadExpenses(period) {
+    try {
+      const expenses = StorageManager.loadExpenses();
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+
+      let filtered = expenses.filter(exp => {
+        const expDate = new Date(exp.date);
+        const expMonth = expDate.getMonth();
+        const expYear = expDate.getFullYear();
+
+        if (period === 'current') {
+          return expMonth === currentMonth && expYear === currentYear;
+        } else {
+          const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+          const lastYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+          return expMonth === lastMonth && expYear === lastYear;
+        }
+      });
+
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      const tbody = document.getElementById('expenseTableBody');
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr style="text-align: center;"><td colspan="6" style="padding: 20px; color: var(--muted);">No expenses for this period</td></tr>';
+        return;
+      }
+
+      filtered.forEach((exp, index) => {
+        const expDate = new Date(exp.date);
+        const dateStr = expDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const timeStr = expDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${exp.category}</td>
+          <td style="font-weight: 700; color: var(--accent);">₹${exp.amount.toLocaleString('en-IN')}</td>
+          <td>${dateStr}</td>
+          <td>${timeStr}</td>
+          <td><button class="btn secondary" style="padding: 4px 8px; font-size: 12px;" onclick="deleteExpenseHandler(${exp.id})">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (error) {
+      console.error('Error loading expenses:', error);
+      alert('Error loading expenses. Please try again.');
+    }
+  }
+
+  function deleteExpenseHandler(id) {
+    if (confirm('Delete this expense?')) {
+      try {
+        StorageManager.deleteExpense(id);
+        loadExpenses(currentMonthFilter);
+        updateHighestExpenses();
+      } catch (error) {
+        console.error('Error deleting expense:', error);
+        alert('Error deleting expense. Please try again.');
+      }
+    }
+  }
+
+  function updateHighestExpenses() {
+    try {
+      const expenses = StorageManager.loadExpenses();
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+
+      const thisMonth = expenses.filter(exp => {
+        const expDate = new Date(exp.date);
+        return expDate.getMonth() === currentMonth && expDate.getFullYear() === currentYear;
+      });
+
+      const highestThis = thisMonth.length > 0 
+        ? thisMonth.reduce((max, exp) => exp.amount > max.amount ? exp : max)
+        : null;
+
+      const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+      const last3Months = expenses.filter(exp => new Date(exp.date) >= threeMonthsAgo);
+      const highest3 = last3Months.length > 0
+        ? last3Months.reduce((max, exp) => exp.amount > max.amount ? exp : max)
+        : null;
+
+      document.getElementById('highestThisMonth').innerText = highestThis ? '₹' + highestThis.amount.toLocaleString('en-IN') : '₹0';
+      document.getElementById('highestThisMonthLabel').innerText = highestThis ? highestThis.category : '—';
+
+      document.getElementById('highestThreeMonths').innerText = highest3 ? '₹' + highest3.amount.toLocaleString('en-IN') : '₹0';
+      document.getElementById('highestThreeMonthsLabel').innerText = highest3 ? highest3.category : '—';
+    } catch (error) {
+      console.error('Error updating highest expenses:', error);
+    }
+  }
+
+  // ============================================
+  // CATEGORY AUTOCOMPLETE
+  // ============================================
+
+  function showCategorySuggestions() {
+    const input = document.getElementById('cat');
+    const suggestionsDiv = document.getElementById('categorySuggestions');
+    const inputValue = input.value.trim().toLowerCase();
+
+    try {
+      const categories = StorageManager.getCategories();
+      
+      let filtered = categories;
+      if (inputValue) {
+        filtered = categories.filter(cat => cat.toLowerCase().includes(inputValue));
+      }
+
+      suggestionsDiv.innerHTML = '';
+
+      if (filtered.length === 0 && !inputValue) {
+        suggestionsDiv.classList.remove('show');
+        return;
+      }
+
+      filtered.forEach(cat => {
+        const div = document.createElement('div');
+        div.className = 'suggestion-item';
+        div.textContent = cat;
+        div.onclick = () => selectCategory(cat);
+        suggestionsDiv.appendChild(div);
+      });
+
+      if (inputValue && !categories.includes(inputValue)) {
+        const addDiv = document.createElement('div');
+        addDiv.className = 'suggestion-item add-new';
+        addDiv.textContent = '+ Add new: "' + inputValue + '"';
+        addDiv.onclick = () => addNewCategory(inputValue);
+        suggestionsDiv.appendChild(addDiv);
+      }
+
+      if (filtered.length > 0 || (inputValue && !categories.includes(inputValue))) {
+        suggestionsDiv.classList.add('show');
+      } else {
+        suggestionsDiv.classList.remove('show');
+      }
+    } catch (error) {
+      console.error('Error showing suggestions:', error);
+    }
+  }
+
+  function hideCategorySuggestions() {
+    document.getElementById('categorySuggestions').classList.remove('show');
+  }
+
+  function selectCategory(category) {
+    document.getElementById('cat').value = category;
+    hideCategorySuggestions();
+  }
+
+  function addNewCategory(category) {
+    const trimmed = category.trim();
+    if (trimmed) {
+      StorageManager.saveCategory(trimmed);
+      selectCategory(trimmed);
+    }
+  }
+
+  // ============================================
+  // EVENT LISTENERS
+  // ============================================
+
+  document.getElementById('cat').addEventListener('input', showCategorySuggestions);
+  document.getElementById('cat').addEventListener('focus', showCategorySuggestions);
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.category-input-container')) {
+      hideCategorySuggestions();
+    }
+  });
+
+  // ============================================
+  // INITIALIZE
+  // ============================================
+
+  window.addEventListener('load', () => {
+    try {
+      loadExpenses('current');
+      updateHighestExpenses();
+    } catch (error) {
+      console.error('Error initializing page:', error);
+    }
+  });
+</script>
+</body>
+</html>

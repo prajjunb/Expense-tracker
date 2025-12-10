@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Expense Tracking Web-application</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    /* ============================================
+       Expense Tracking  DASHBOARD - 2025
+       Enterprise Grade Design System
+       ============================================ */
+
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+
+    :root {
+      /* Premium Color Palette */
+      --color-primary: #1e293b;
+      --color-secondary: #667eea;
+      --color-accent: #f5576c;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-danger: #ef4444;
+      --color-light: #f8fafc;
+      --color-lighter: #f1f5f9;
+      --color-border: #e2e8f0;
+      --color-text: #1e293b;
+      --color-text-secondary: #64748b;
+      --color-white: #ffffff;
+      
+      /* Gradients */
+      --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-premium: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      --gradient-glow: radial-gradient(circle at 30% 50%, rgba(102, 126, 234, 0.15), transparent 50%);
+      
+      /* Spacing */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 10px 32px rgba(0, 0, 0, 0.12);
+      --shadow-xl: 0 20px 48px rgba(0, 0, 0, 0.15);
+      
+      /* Transitions */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      color: var(--color-text);
+      min-height: 100vh;
+      padding-bottom: 20px;
+    }
+
+    /* Dark theme support */
+    body[data-theme="dark"] {
+      background: linear-gradient(135deg, #0f172a 0%, #1a2332 100%);
+    }
+
+    body[data-theme="dark"] .header {
+      background: #1a2332;
+      border-bottom-color: #334155;
+    }
+
+    body[data-theme="dark"] .card,
+    body[data-theme="dark"] .plan-card,
+    body[data-theme="dark"] .app-box,
+    body[data-theme="dark"] .modal {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    body[data-theme="dark"] .modal {
+      background: #1e293b;
+    }
+
+    body[data-theme="dark"] .form-input {
+      background: #334155;
+      border-color: #475569;
+      color: #e2e8f0;
+    }
+
+    body[data-theme="dark"] .form-input:focus {
+      border-color: var(--color-secondary);
+    }
+
+    body[data-theme="dark"] .color-text {
+      color: #e2e8f0;
+    }
+
+    body[data-theme="dark"] .color-text-secondary {
+      color: #cbd5f0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+      width: 100%;
+    }
+
+
+    /* ============================================
+       HEADER - PREMIUM NAV
+       ============================================ */
+
+
+    .header {
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-normal);
+    }
+
+
+    .header-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: -0.5px;
+    }
+
+    body[data-theme="dark"] .logo-text {
+      color: #e2e8f0;
+    }
+
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+
+    .profile-section {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding-right: var(--spacing-md);
+      border-right: 1px solid var(--color-border);
+    }
+
+    body[data-theme="dark"] .profile-section {
+      border-right-color: #334155;
+    }
+
+
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      box-shadow: var(--shadow-sm);
+    }
+
+
+    .user-avatar:hover {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-md);
+    }
+
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    body[data-theme="dark"] .user-name {
+      color: #e2e8f0;
+    }
+
+
+    .user-status {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+
+    body[data-theme="dark"] .user-status {
+      color: #cbd5f0;
+    }
+
+
+    /* Menu Button */
+    .menu-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: var(--transition-fast);
+    }
+
+
+    .menu-button:hover {
+      background: var(--color-lighter);
+      border-radius: 8px;
+    }
+
+    body[data-theme="dark"] .menu-button:hover {
+      background: #334155;
+    }
+
+
+    .menu-dots {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+
+    .dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--color-primary);
+    }
+
+    body[data-theme="dark"] .dot {
+      background: #e2e8f0;
+    }
+
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--color-white);
+      border-radius: 12px;
+      box-shadow: var(--shadow-xl);
+      min-width: 240px;
+      margin-top: 8px;
+      display: none;
+      z-index: 1000;
+      border: 1px solid var(--color-border);
+      overflow: hidden;
+      animation: slideDown var(--transition-normal);
+    }
+
+    body[data-theme="dark"] .dropdown-menu {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+
+    .dropdown-menu.active {
+      display: block;
+    }
+
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    .menu-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      color: var(--color-text);
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition-fast);
+    }
+
+    body[data-theme="dark"] .menu-item {
+      color: #e2e8f0;
+    }
+
+
+    .menu-item:hover {
+      background: var(--color-lighter);
+      color: var(--color-secondary);
+    }
+
+    body[data-theme="dark"] .menu-item:hover {
+      background: #334155;
+    }
+
+
+    .menu-item.danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--color-danger);
+    }
+
+    body[data-theme="dark"] .menu-item.danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+
+    .menu-item-icon {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+
+    .menu-divider {
+      height: 1px;
+      background: var(--color-border);
+      margin: 8px 0;
+    }
+
+    body[data-theme="dark"] .menu-divider {
+      background: #334155;
+    }
+
+
+    /* ============================================
+       MAIN CONTENT
+       ============================================ */
+
+
+    .main-header {
+      padding: var(--spacing-xl) 0 var(--spacing-lg) 0;
+    }
+
+
+    .welcome-section h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 8px;
+    }
+
+    body[data-theme="dark"] .welcome-section h1 {
+      color: #e2e8f0;
+    }
+
+
+    .welcome-section p {
+      font-size: 16px;
+      color: var(--color-text-secondary);
+      margin-bottom: 0;
+    }
+
+    body[data-theme="dark"] .welcome-section p {
+      color: #cbd5f0;
+    }
+
+
+    /* ============================================
+       ACTION TABS
+       ============================================ */
+
+
+    .action-tabs {
+      display: flex;
+      gap: 0;
+      background: var(--color-white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    body[data-theme="dark"] .action-tabs {
+      background: #1e293b;
+    }
+
+
+    .action-tab {
+      flex: 1;
+      padding: 14px 16px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      transition: var(--transition-fast);
+      border-bottom: 3px solid transparent;
+      position: relative;
+    }
+
+    body[data-theme="dark"] .action-tab {
+      color: #cbd5f0;
+    }
+
+
+    .action-tab:hover {
+      background: var(--color-lighter);
+      color: var(--color-secondary);
+    }
+
+    body[data-theme="dark"] .action-tab:hover {
+      background: #334155;
+    }
+
+
+    .action-tab.active {
+      color: var(--color-secondary);
+      border-bottom-color: var(--color-secondary);
+    }
+
+
+    /* ============================================
+       CARD STYLES
+       ============================================ */
+
+
+    .card {
+      background: var(--color-white);
+      border-radius: 14px;
+      border: 1px solid var(--color-border);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-normal);
+    }
+
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--color-secondary);
+      transform: translateY(-2px);
+    }
+
+
+    /* ============================================
+       SECTION TITLES
+       ============================================ */
+
+
+    .section-title {
+      margin-top: var(--spacing-xl);
+      margin-bottom: var(--spacing-lg);
+      color: var(--color-primary);
+      font-size: 18px;
+      font-weight: 700;
+      padding-bottom: var(--spacing-md);
+      border-bottom: 2px solid var(--color-secondary);
+      display: inline-block;
+    }
+
+    body[data-theme="dark"] .section-title {
+      color: #e2e8f0;
+    }
+
+
+    /* ============================================
+       PLAN CARDS
+       ============================================ */
+
+
+    .plans {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+
+
+    @media (min-width: 768px) {
+      .plans {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+
+    .plan-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--color-white);
+      border-radius: 12px;
+      border: 2px solid var(--color-border);
+      padding: var(--spacing-lg);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+
+    .plan-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-primary);
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+    }
+
+
+    .plan-card:hover {
+      border-color: var(--color-secondary);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+
+
+    .plan-card:hover::before {
+      opacity: 1;
+    }
+
+
+    .plan-name {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: var(--spacing-md);
+      color: var(--color-primary);
+    }
+
+    body[data-theme="dark"] .plan-name {
+      color: #e2e8f0;
+    }
+
+
+    .plan-desc {
+      color: var(--color-text-secondary);
+      font-size: 13px;
+      margin-bottom: var(--spacing-lg);
+      line-height: 1.6;
+    }
+
+    body[data-theme="dark"] .plan-desc {
+      color: #cbd5f0;
+    }
+
+
+    .plan-card button {
+      width: 100%;
+    }
+
+
+    /* ============================================
+       BUTTONS
+       ============================================ */
+
+
+    button, .btn {
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all var(--transition-normal);
+      box-shadow: var(--shadow-md);
+      display: inline-block;
+      text-align: center;
+      text-decoration: none;
+    }
+
+
+    button:hover, .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+
+    button:active, .btn:active {
+      transform: translateY(0);
+    }
+
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+
+    .btn-secondary:hover {
+      filter: brightness(1.1);
+    }
+
+
+    .btn-outline {
+      background: none;
+      border: 2px solid var(--color-secondary);
+      color: var(--color-secondary);
+      box-shadow: none;
+    }
+
+
+    .btn-outline:hover {
+      background: rgba(102, 126, 234, 0.1);
+    }
+
+
+    /* ============================================
+       SLIDERS & INPUTS
+       ============================================ */
+
+
+    .slider-container {
+      margin-bottom: var(--spacing-lg);
+    }
+
+
+    .slider-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-md);
+      color: var(--color-primary);
+    }
+
+    body[data-theme="dark"] .slider-title {
+      color: #e2e8f0;
+    }
+
+
+    .slider-value {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 50px;
+      text-align: center;
+    }
+
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      border: 3px solid var(--color-secondary);
+      transition: var(--transition-fast);
+    }
+
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      box-shadow: var(--shadow-lg);
+      transform: scale(1.1);
+    }
+
+
+    input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      border: 3px solid var(--color-secondary);
+      transition: var(--transition-fast);
+    }
+
+
+    /* ============================================
+       BREAKDOWN SECTION
+       ============================================ */
+
+
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-lg) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    body[data-theme="dark"] .breakdown-item {
+      border-bottom-color: #334155;
+    }
+
+
+    .breakdown-item:last-child {
+      border-bottom: none;
+    }
+
+
+    .breakdown-label {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      font-weight: 600;
+    }
+
+    body[data-theme="dark"] .breakdown-label {
+      color: #cbd5f0;
+    }
+
+
+    .breakdown-amount {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-secondary);
+    }
+
+
+    /* ============================================
+       APPS GRID
+       ============================================ */
+
+
+    .apps {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+    }
+
+
+    @media (min-width: 768px) {
+      .apps {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+
+    .app-box {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      padding: var(--spacing-lg);
+      background: var(--color-white);
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+      transition: all var(--transition-normal);
+    }
+
+
+    .app-box:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--color-secondary);
+      transform: translateY(-4px);
+    }
+
+
+    .app-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--color-primary);
+    }
+
+    body[data-theme="dark"] .app-title {
+      color: #e2e8f0;
+    }
+
+
+    .app-box .small {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+
+    body[data-theme="dark"] .app-box .small {
+      color: #cbd5f0;
+    }
+
+
+    .app-box button {
+      width: 100%;
+      margin-top: var(--spacing-md);
+    }
+
+
+    /* ============================================
+       MODALS
+       ============================================ */
+
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+      backdrop-filter: blur(4px);
+      animation: fadeIn var(--transition-normal);
+    }
+
+
+    .overlay.active {
+      display: block;
+    }
+
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+
+    .modal {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--color-white);
+      padding: var(--spacing-xl);
+      border-radius: 16px;
+      box-shadow: var(--shadow-xl);
+      z-index: 1000;
+      width: 90%;
+      max-width: 420px;
+      display: none;
+      animation: slideUp var(--transition-normal);
+    }
+
+
+    .modal.active {
+      display: block;
+    }
+
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+
+    .modal h4 {
+      margin: 0 0 var(--spacing-md) 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    body[data-theme="dark"] .modal h4 {
+      color: #e2e8f0;
+    }
+
+
+    .modal label {
+      display: block;
+      margin-bottom: var(--spacing-sm);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+
+    body[data-theme="dark"] .modal label {
+      color: #cbd5f0;
+    }
+
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 2px solid var(--color-border);
+      font-size: 16px;
+      margin-bottom: var(--spacing-lg);
+      transition: all var(--transition-fast);
+      color: var(--color-text);
+      background: var(--color-white);
+    }
+
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-secondary);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Hike Options */
+    .hike-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-md);
+      margin: var(--spacing-lg) 0;
+    }
+
+    .hike-btn {
+      padding: 10px 16px;
+      border: 2px solid var(--color-border);
+      background: var(--color-white);
+      color: var(--color-text);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all var(--transition-fast);
+    }
+
+    body[data-theme="dark"] .hike-btn {
+      background: #334155;
+      border-color: #475569;
+      color: #e2e8f0;
+    }
+
+    .hike-btn:hover {
+      border-color: var(--color-secondary);
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--color-secondary);
+    }
+
+    .hike-btn.active {
+      background: var(--color-secondary);
+      border-color: var(--color-secondary);
+      color: white;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: var(--spacing-md);
+      justify-content: flex-end;
+    }
+
+
+    .modal-actions button {
+      flex: 1;
+      padding: 12px 16px;
+    }
+
+
+    .modal-actions button:last-child {
+      background: var(--color-border);
+      color: var(--color-text);
+    }
+
+    body[data-theme="dark"] .modal-actions button:last-child {
+      background: #475569;
+      color: #e2e8f0;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+
+
+    @media (max-width: 768px) {
+      .logo-text {
+        display: none;
+      }
+
+
+      .user-info {
+        display: none;
+      }
+
+
+      .header-right {
+        gap: var(--spacing-md);
+      }
+
+
+      .profile-section {
+        padding-right: var(--spacing-sm);
+        border-right: none;
+      }
+
+
+      .welcome-section h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+
+<!-- HEADER -->
+<div class="header">
+  <div class="container">
+    <div class="header-wrapper">
+      <!-- Logo Section -->
+      <div class="header-left">
+        <div class="logo-section">
+          <div class="logo-icon">💰</div>
+          <div class="logo-text">FinFlow</div>
+        </div>
+      </div>
+
+
+      <!-- Right Section with Profile & Menu -->
+      <div class="header-right">
+        <div class="profile-section">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <div class="user-info">
+            <div class="user-name" id="userName">User</div>
+            <div class="user-status">Premium Member</div>
+          </div>
+        </div>
+
+
+        <!-- Three Dot Menu -->
+        <div style="position: relative;">
+          <button class="menu-button" id="menuBtn">
+            <div class="menu-dots">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+          </button>
+          <div class="dropdown-menu" id="dropdownMenu">
+            <div class="menu-item" onclick="openMenuPage('add-expense.html')">
+              <span class="menu-item-icon">➕</span>
+              <span>Add Expense</span>
+            </div>
+            <div class="menu-item" onclick="openMenuPage('settings.html')">
+              <span class="menu-item-icon">⚙️</span>
+              <span>Settings</span>
+            </div>
+            <div class="menu-item" onclick="openMenuPage('notifications.html')">
+              <span class="menu-item-icon">🔔</span>
+              <span>Notifications</span>
+            </div>
+            <div class="menu-item" onclick="openMenuPage('profile.html')">
+              <span class="menu-item-icon">👤</span>
+              <span>Profile</span>
+            </div>
+            <div class="menu-item" onclick="openMenuPage('preferences.html')">
+              <span class="menu-item-icon">⚡</span>
+              <span>Preferences</span>
+            </div>
+
+            <div class="menu-item" onclick="openSalaryEditor()">
+              <span class="menu-item-icon">💵</span>
+              <span>Edit Salary & Hike</span>
+            </div>
+
+            <div class="menu-divider"></div>
+            <div class="menu-item" onclick="openMenuPage('reports.html')">
+              <span class="menu-item-icon">📊</span>
+              <span>Reports</span>
+            </div>
+            <div class="menu-item" onclick="openMenuPage('help-support.html')">
+              <span class="menu-item-icon">❓</span>
+              <span>Help & Support</span>
+            </div>
+            <div class="menu-divider"></div>
+            <div class="menu-item danger" onclick="logout()">
+              <span class="menu-item-icon">🚪</span>
+              <span>Logout</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MAIN CONTENT -->
+<div class="container">
+  <!-- Welcome Section -->
+  <div class="main-header">
+    <div class="welcome-section">
+      <h1 id="welcomeText">Welcome back! 👋</h1>
+      <p>Let's manage your finances smartly today</p>
+    </div>
+  </div>
+
+
+<!-- Action Tabs -->
+<div class="action-tabs">
+  <button class="action-tab active" onclick="navigateToAddExpense()">➕ Add Expense</button>
+
+  <button class="action-tab" onclick="openBillScanner()">📷 Scan Bill</button>
+
+  <button class="action-tab" onclick="switchTab(this, 'track')">📊 Track Spending</button>
+  <button class="action-tab" onclick="switchTab(this, 'goals')">🎯 Goals</button>
+</div>
+
+
+
+
+  <!-- Recommendation Plans -->
+  <h3 class="section-title">📊 Recommendation Plans</h3>
+
+
+  <div class="plans">
+    <div class="card plan-card">
+      <div class="plan-name">⚖️ Balanced</div>
+      <div class="plan-desc">Invest 30% • Save 20% • Essentials 50%</div>
+      <button onclick="applyPreset(30,20,50)">Apply Plan</button>
+    </div>
+
+
+    <div class="card plan-card">
+      <div class="plan-name">🛡️ Conservative</div>
+      <div class="plan-desc">Invest 15% • Save 35% • Essentials 50%</div>
+      <button onclick="applyPreset(15,35,50)">Apply Plan</button>
+    </div>
+
+
+    <div class="card plan-card">
+      <div class="plan-name">🚀 Aggressive</div>
+      <div class="plan-desc">Invest 45% • Save 10% • Essentials 45%</div>
+      <button onclick="applyPreset(45,10,45)">Apply Plan</button>
+    </div>
+  </div>
+
+
+  <!-- Custom Plan -->
+  <h3 class="section-title">🎚️ Custom Plan</h3>
+
+
+  <div class="card">
+    <div class="slider-container">
+      <div class="slider-title">
+        <span>💼 Invest Amount</span>
+        <span class="slider-value"><span id="invPctDisplay">30</span>%</span>
+      </div>
+      <input id="ci" type="range" min="0" max="100" value="30">
+    </div>
+
+
+    <div class="slider-container">
+      <div class="slider-title">
+        <span>🏦 Save Amount</span>
+        <span class="slider-value"><span id="savPctDisplay">20</span>%</span>
+      </div>
+      <input id="cs" type="range" min="0" max="100" value="20">
+    </div>
+
+
+    <div class="slider-container">
+      <div class="slider-title">
+        <span>🛒 Essentials</span>
+        <span class="slider-value"><span id="essPctDisplay">50</span>%</span>
+      </div>
+      <input id="ce" type="range" min="0" max="100" value="50" disabled>
+    </div>
+
+
+    <button id="applyCustomBtn" style="width: 100%; margin-top: 16px;">Apply Custom Plan</button>
+  </div>
+
+
+  <!-- Your Breakdown -->
+  <h3 class="section-title">📈 Your Breakdown</h3>
+  <div class="card">
+    <div class="breakdown-item">
+      <span class="breakdown-label">💼 Invest</span>
+      <span class="breakdown-amount" id="o1">₹0</span>
+    </div>
+    <div class="breakdown-item">
+      <span class="breakdown-label">🏦 Save</span>
+      <span class="breakdown-amount" id="o2">₹0</span>
+    </div>
+    <div class="breakdown-item">
+      <span class="breakdown-label">🛒 Essentials</span>
+      <span class="breakdown-amount" id="o3">₹0</span>
+    </div>
+  </div>
+
+
+  <!-- Investing Apps -->
+  <h3 class="section-title">📱 Recommended Platforms</h3>
+
+
+  <div class="apps">
+    <div class="app-box">
+      <div class="app-title">💎 Jar</div>
+      <div class="small">Gold savings & auto-savings.</div>
+      <button class="btn-secondary" onclick="openApp('https://www.myjar.app/')">Open</button>
+    </div>
+
+
+    <div class="app-box">
+      <div class="app-title">📊 Groww</div>
+      <div class="small">Mutual funds & SIPs.</div>
+      <button class="btn-secondary" onclick="openApp('https://groww.in')">Open</button>
+    </div>
+
+
+    <div class="app-box">
+      <div class="app-title">📈 Zerodha</div>
+      <div class="small">Broker & trading.</div>
+      <button class="btn-secondary" onclick="openApp('https://zerodha.com')">Open</button>
+    </div>
+
+
+    <div class="app-box">
+      <div class="app-title">⭐ Angel One</div>
+      <div class="small">Brokerage & funds.</div>
+      <button class="btn-secondary" onclick="openApp('https://angelone.in')">Open</button>
+    </div>
+
+
+    <div class="app-box">
+      <div class="app-title">🎯 Upstox</div>
+      <div class="small">Discount broker.</div>
+      <button class="btn-secondary" onclick="openApp('https://upstox.com')">Open</button>
+    </div>
+
+
+    <div class="app-box">
+      <div class="app-title">💰 ET Money</div>
+      <div class="small">Funds & insurance.</div>
+      <button class="btn-secondary" onclick="openApp('https://etmoney.com')">Open</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Salary & Hike Editor Modal -->
+<div class="overlay" id="overlay"></div>
+<div class="modal" id="salaryEditor" role="dialog" aria-modal="true">
+  <h4>💵 Edit Salary & Salary Hike</h4>
+  
+  <label for="salaryInput">Current Salary (₹)</label>
+  <input type="number" id="salaryInput" class="form-input" placeholder="Enter your salary" min="0" step="1000">
+
+  <label>Apply Salary Hike</label>
+  <div class="hike-options">
+    <button class="hike-btn" onclick="selectHike(5)">+5%</button>
+    <button class="hike-btn" onclick="selectHike(10)">+10%</button>
+    <button class="hike-btn" onclick="selectHike(15)">+15%</button>
+  </div>
+
+  <div id="hikeCalculation" style="display: none; background: rgba(102, 126, 234, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; color: var(--color-text-secondary);">
+    <div style="margin-bottom: 6px;">Base Salary: ₹<span id="baseSalaryDisplay">0</span></div>
+    <div style="margin-bottom: 6px;">Hike Amount: ₹<span id="hikeAmountDisplay">0</span></div>
+    <div style="font-weight: 600; color: var(--color-secondary);">New Salary: ₹<span id="newSalaryDisplay">0</span></div>
+  </div>
+
+  <div class="modal-actions">
+    <button onclick="saveSalary()">Save Salary</button>
+    <button onclick="closeSalaryEditor()">Cancel</button>
+  </div>
+</div>
+
+
+
+
+<!-- Existing dashboard JS -->
+<script>
+  /* ============================================
+     AUTHENTICATION & THEME
+     ============================================ */
+  const CURRENT_KEY = 'currentUser';
+  
+  // Apply theme from settings
+  function applyTheme() {
+    const theme = localStorage.getItem('appTheme') || 
+                  localStorage.getItem('theme') || 
+                  'light';
+    document.body.setAttribute('data-theme', theme);
+  }
+  applyTheme();
+
+  // Listen for storage changes
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'appTheme' || e.key === 'theme') {
+      applyTheme();
+    }
+    if (e.key === 'currentUser') {
+      hydrateUserHeader();
+    }
+    if (e.key === 'salary') {
+      recalcBreakdownFromUI();
+    }
+  });
+
+  // ===== USER HEADER HYDRATION =====
+  function hydrateUserHeader() {
+    try {
+      const userRaw = localStorage.getItem(CURRENT_KEY);
+      if (!userRaw) {
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      let userName = 'User';
+      let userFirstLetter = 'U';
+      
+      try {
+        const parsed = JSON.parse(userRaw);
+        if (parsed && parsed.name) {
+          userName = parsed.name;
+          userFirstLetter = parsed.name.charAt(0).toUpperCase();
+        }
+      } catch (_) {
+        userName = String(userRaw);
+        userFirstLetter = userName.charAt(0).toUpperCase();
+      }
+      
+      document.getElementById('userName').innerText = userName;
+      document.getElementById('userAvatar').innerText = userFirstLetter;
+      document.getElementById('welcomeText').innerText = `Welcome back, ${userName.split(' ')[0]}! 👋`;
+    } catch (e) {
+      console.error('Error hydrating user header', e);
+    }
+  }
+
+  hydrateUserHeader();
+
+  /* ============================================
+     MENU FUNCTIONALITY
+     ============================================ */
+
+
+  const menuBtn = document.getElementById('menuBtn');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  const overlay = document.getElementById('overlay');
+
+
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle('active');
+  });
+
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.menu-button') && !e.target.closest('.dropdown-menu')) {
+      dropdownMenu.classList.remove('active');
+    }
+  });
+
+
+  /* ============================================
+     NAVIGATION HELPER
+     ============================================ */
+
+
+  function saveDashboardState(nextPage) {
+    const salary = localStorage.getItem('salary') || '';
+    const planData = localStorage.getItem('planData') || '';
+    localStorage.setItem('dashboardState', JSON.stringify({
+      salary: salary,
+      planData: planData,
+      lastVisited: new Date().toISOString(),
+      nextPage: nextPage
+    }));
+  }
+
+
+  function navigateToPage(page) {
+    saveDashboardState(page);
+    window.location.href = page;
+  }
+
+
+  function openMenuPage(page) {
+    dropdownMenu.classList.remove('active');
+    navigateToPage(page);
+  }
+
+
+  function navigateToAddExpense() {
+    navigateToPage('add-expense.html');
+  }
+
+  function openBillScanner() {
+    navigateToPage('scan-bill.html');
+  }
+
+  /* ============================================
+     SALARY & HIKE MANAGEMENT
+     ============================================ */
+
+  let selectedHikePercent = 0;
+
+  function openSalaryEditor() {
+    const cur = Number(localStorage.getItem('salary')) || '';
+    document.getElementById('salaryInput').value = cur ? cur : '';
+    selectedHikePercent = 0;
+    document.querySelectorAll('.hike-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('hikeCalculation').style.display = 'none';
+    overlay.classList.add('active');
+    document.getElementById('salaryEditor').classList.add('active');
+    setTimeout(() => document.getElementById('salaryInput').focus(), 100);
+  }
+
+  function closeSalaryEditor() {
+    overlay.classList.remove('active');
+    document.getElementById('salaryEditor').classList.remove('active');
+    document.getElementById('salaryInput').value = '';
+    selectedHikePercent = 0;
+    document.querySelectorAll('.hike-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('hikeCalculation').style.display = 'none';
+  }
+
+  function selectHike(percent) {
+    selectedHikePercent = percent;
+    document.querySelectorAll('.hike-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    updateHikeCalculation();
+  }
+
+  function updateHikeCalculation() {
+    const salary = Number(document.getElementById('salaryInput').value);
+    if (isNaN(salary) || salary <= 0) {
+      document.getElementById('hikeCalculation').style.display = 'none';
+      return;
+    }
+
+    if (selectedHikePercent === 0) {
+      document.getElementById('hikeCalculation').style.display = 'none';
+      return;
+    }
+
+    const hikeAmount = Math.round(salary * selectedHikePercent / 100);
+    const newSalary = salary + hikeAmount;
+
+    document.getElementById('baseSalaryDisplay').innerText = salary.toLocaleString('en-IN');
+    document.getElementById('hikeAmountDisplay').innerText = hikeAmount.toLocaleString('en-IN');
+    document.getElementById('newSalaryDisplay').innerText = newSalary.toLocaleString('en-IN');
+    document.getElementById('hikeCalculation').style.display = 'block';
+  }
+
+  document.getElementById('salaryInput').addEventListener('input', updateHikeCalculation);
+
+  function saveSalary() {
+    let salary = Number(document.getElementById('salaryInput').value);
+    
+    if (isNaN(salary) || salary < 0) {
+      alert('Please enter a valid salary amount');
+      return;
+    }
+
+    // Apply hike if selected
+    if (selectedHikePercent > 0) {
+      const hikeAmount = Math.round(salary * selectedHikePercent / 100);
+      salary = salary + hikeAmount;
+    }
+
+    localStorage.setItem('salary', String(Math.round(salary)));
+    recalcBreakdownFromUI();
+    closeSalaryEditor();
+    alert('✅ Salary updated successfully!');
+  }
+
+
+  // Open salary editor on first load if not set
+  if (!localStorage.getItem('salary')) {
+    setTimeout(openSalaryEditor, 500);
+  }
+
+
+  /* ============================================
+     PRESET PLANS
+     ============================================ */
+
+
+  function applyPreset(investPct, savePct, essPct) {
+    const salary = Number(localStorage.getItem('salary')) || 0;
+    if (!salary) {
+      alert('Please set your salary first');
+      openSalaryEditor();
+      return;
+    }
+
+
+    const investAmt = Math.round(salary * investPct / 100);
+    const saveAmt = Math.round(salary * savePct / 100);
+    const essAmt = Math.round(salary * essPct / 100);
+
+
+    // Store plan data in localStorage
+    localStorage.setItem('planData', JSON.stringify({
+      investPercent: investPct,
+      savePercent: savePct,
+      essentialPercent: essPct,
+      investAmount: investAmt,
+      saveAmount: saveAmt,
+      essentialAmount: essAmt,
+      appliedAt: new Date().toISOString()
+    }));
+
+
+    document.getElementById('o1').innerText = '₹' + investAmt.toLocaleString('en-IN');
+    document.getElementById('o2').innerText = '₹' + saveAmt.toLocaleString('en-IN');
+    document.getElementById('o3').innerText = '₹' + essAmt.toLocaleString('en-IN');
+
+
+    document.getElementById('ci').value = investPct;
+    document.getElementById('cs').value = savePct;
+    document.getElementById('ce').value = essPct;
+    document.getElementById('invPctDisplay').innerText = investPct;
+    document.getElementById('savPctDisplay').innerText = savePct;
+    document.getElementById('essPctDisplay').innerText = essPct;
+  }
+
+
+  /* ============================================
+     CUSTOM PLAN SLIDERS
+     ============================================ */
+
+
+  const ci = document.getElementById('ci');
+  const cs = document.getElementById('cs');
+  const ce = document.getElementById('ce');
+
+
+  function refreshCustomDisplays() {
+    const a = Number(ci.value);
+    let b = Number(cs.value);
+    let c = 100 - a - b;
+    if (c < 0) {
+      const newB = Math.max(0, 100 - a);
+      cs.value = newB;
+      b = newB;
+      c = 100 - a - b;
+    }
+    ce.value = c;
+    document.getElementById('invPctDisplay').innerText = a;
+    document.getElementById('savPctDisplay').innerText = b;
+    document.getElementById('essPctDisplay').innerText = c;
+  }
+
+
+  refreshCustomDisplays();
+  ci.addEventListener('input', refreshCustomDisplays);
+  cs.addEventListener('input', refreshCustomDisplays);
+
+
+  document.getElementById('applyCustomBtn').addEventListener('click', () => {
+    const salary = Number(localStorage.getItem('salary')) || 0;
+    if (!salary) {
+      alert('Please set your salary first');
+      openSalaryEditor();
+      return;
+    }
+    const investPct = Number(ci.value);
+    const savePct = Number(cs.value);
+    const essPct = Number(ce.value);
+
+
+    const investAmt = Math.round(salary * investPct / 100);
+    const saveAmt = Math.round(salary * savePct / 100);
+    const essAmt = Math.round(salary * essPct / 100);
+
+
+    // Store custom plan data in localStorage
+    localStorage.setItem('planData', JSON.stringify({
+      investPercent: investPct,
+      savePercent: savePct,
+      essentialPercent: essPct,
+      investAmount: investAmt,
+      saveAmount: saveAmt,
+      essentialAmount: essAmt,
+      appliedAt: new Date().toISOString()
+    }));
+
+
+    document.getElementById('o1').innerText = '₹' + investAmt.toLocaleString('en-IN');
+    document.getElementById('o2').innerText = '₹' + saveAmt.toLocaleString('en-IN');
+    document.getElementById('o3').innerText = '₹' + essAmt.toLocaleString('en-IN');
+  });
+
+
+  function recalcBreakdownFromUI() {
+    const salary = Number(localStorage.getItem('salary')) || 0;
+    if (!salary) return;
+    const investPct = Number(ci.value);
+    const savePct = Number(cs.value);
+    const essPct = Number(ce.value);
+    const investAmt = Math.round(salary * investPct / 100);
+    const saveAmt = Math.round(salary * savePct / 100);
+    const essAmt = Math.round(salary * essPct / 100);
+
+
+    document.getElementById('o1').innerText = '₹' + investAmt.toLocaleString('en-IN');
+    document.getElementById('o2').innerText = '₹' + saveAmt.toLocaleString('en-IN');
+    document.getElementById('o3').innerText = '₹' + essAmt.toLocaleString('en-IN');
+  }
+
+
+  /* ============================================
+     UTILITIES
+     ============================================ */
+
+
+  function openApp(url) {
+    window.open(url, '_blank');
+  }
+
+
+  function logout() {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('dashboardState');
+    window.location.href = 'index.html';
+  }
+
+
+  function switchTab(element, tabName) {
+    document.querySelectorAll('.action-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    element.classList.add('active');
+
+
+    if (tabName === 'track') {
+      navigateToPage('trackspending.html');
+    } else if (tabName === 'goals') {
+      navigateToPage('goals.html');
+    }
+  }
+
+
+  document.getElementById('salaryInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') saveSalary();
+  });
+
+
+  overlay.addEventListener('click', closeSalaryEditor);
+
+
+  // Initial calculation
+  recalcBreakdownFromUI();
+</script>
+
+
+</body>
+</html>

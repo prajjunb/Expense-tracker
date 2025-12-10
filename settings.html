@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Settings —</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #1e293b;
+      --color-secondary: #667eea;
+      --color-accent: #f5576c;
+      --color-success: #10b981;
+      --color-danger: #ef4444;
+      --color-warning: #f59e0b;
+      --color-muted: #64748b;
+      --color-light: #f8fafc;
+      --color-lighter: #f1f5f9;
+      --color-border: #e2e8f0;
+      --color-white: #ffffff;
+
+      --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-soft: linear-gradient(135deg, #f9fafb 0%, #eef2ff 100%);
+
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 18px 45px rgba(15, 23, 42, 0.16);
+
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+      background: radial-gradient(circle at 0% 0%, rgba(102,126,234,0.12), transparent 55%),
+                  radial-gradient(circle at 100% 100%, rgba(244,114,182,0.1), transparent 55%),
+                  #f3f6fb;
+      color: var(--color-primary);
+      min-height: 100vh;
+    }
+
+    body.theme-dark {
+      background: radial-gradient(circle at 0% 0%, rgba(37,99,235,0.18), transparent 55%),
+                  #020617;
+      color: #e5e7eb;
+    }
+
+    body.theme-dark .card {
+      background: linear-gradient(145deg, #020617, #020617, #020617);
+      border-color: rgba(148, 163, 184, 0.25);
+    }
+
+    body.theme-dark .header {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.3);
+      backdrop-filter: blur(16px);
+    }
+
+    body.theme-dark .back-link {
+      color: #e5e7eb;
+      border-color: rgba(148, 163, 184, 0.4);
+      background: radial-gradient(circle at top left, rgba(51,65,85,0.6), rgba(15,23,42,0.9));
+    }
+
+    body.theme-dark .tag {
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      border-color: rgba(148, 163, 184, 0.6);
+    }
+
+    body.theme-dark input,
+    body.theme-dark select {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.5);
+      color: #e5e7eb;
+    }
+
+    body.theme-dark .setting-label span:last-child {
+      color: #9ca3af;
+    }
+
+    .wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    /* HEADER ------------------------------------------------- */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(248, 250, 252, 0.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-white);
+      font-size: 20px;
+      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.30);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-text span:first-child {
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-text span:last-child {
+      font-size: 12px;
+      color: var(--color-muted);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: linear-gradient(135deg, rgba(255,255,255,0.97), rgba(248,250,252,0.9));
+      box-shadow: var(--shadow-sm);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    .back-link span.icon {
+      font-size: 16px;
+    }
+
+    .back-link:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(129, 140, 248, 0.9);
+    }
+
+    /* PAGE TITLE --------------------------------------------- */
+    .page-header {
+      margin: 18px 0 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .page-header h1 {
+      font-size: 30px;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--color-muted);
+    }
+
+    .tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(248,250,252,0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--color-muted);
+    }
+
+    .tag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--color-success);
+      box-shadow: 0 0 0 4px rgba(16,185,129,0.25);
+    }
+
+    /* GRID --------------------------------------------------- */
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* CARDS -------------------------------------------------- */
+    .card {
+      background: radial-gradient(circle at top left, rgba(255,255,255,0.9), rgba(248,250,252,0.95));
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: var(--shadow-md);
+      padding: 18px 18px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at top right, rgba(129, 140, 248, 0.12), transparent 60%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-normal);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title span.icon {
+      font-size: 18px;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--color-muted);
+    }
+
+    .chip {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(129,140,248,0.08);
+      color: var(--color-secondary);
+      border: 1px solid rgba(129,140,248,0.45);
+    }
+
+    .card-body {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* FORMS -------------------------------------------------- */
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
+      color: var(--color-primary);
+    }
+
+    .field {
+      margin-bottom: 8px;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      padding: 10px 14px;
+      font-size: 14px;
+      outline: none;
+      background: rgba(255,255,255,0.9);
+      transition: all var(--transition-fast);
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: rgba(129,140,248,0.95);
+      box-shadow: 0 0 0 1px rgba(129,140,248,0.6), 0 10px 30px rgba(55,65,81,0.18);
+      background: #ffffff;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* BUTTONS ----------------------------------------------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all var(--transition-normal);
+      box-shadow: var(--shadow-sm);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-ghost {
+      background: rgba(148, 163, 184, 0.08);
+      color: var(--color-primary);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(148,163,184,0.16);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: rgba(248,113,113,0.08);
+      color: var(--color-danger);
+    }
+
+    .btn-danger:hover {
+      background: rgba(248,113,113,0.16);
+      transform: translateY(-1px);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .btn-icon {
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+
+    /* SWITCH ------------------------------------------------- */
+    .switch {
+      position: relative;
+      width: 38px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: rgba(148, 163, 184, 0.65);
+      transition: .2s;
+      border-radius: 999px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.25);
+    }
+
+    .switch input:checked + .slider {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    /* CATEGORY LIST ----------------------------------------- */
+    .category-list {
+      margin-top: 6px;
+      border-radius: var(--radius-md);
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      padding: 8px;
+      max-height: 190px;
+      overflow: auto;
+      background: linear-gradient(135deg, rgba(248,250,252,0.9), rgba(241,245,249,0.9));
+    }
+
+    .category-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 4px;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .category-item span.name {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .category-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .pill-muted {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.13);
+      color: var(--color-muted);
+    }
+
+    /* INLINE META ------------------------------------------- */
+    .setting-meta {
+      font-size: 12px;
+      color: var(--color-muted);
+    }
+
+    .setting-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .setting-label span:last-child {
+      font-size: 11px;
+      color: var(--color-muted);
+    }
+
+    /* TOAST -------------------------------------------------- */
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.98);
+      color: white;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 16px 40px rgba(22,163,74,0.45);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: all var(--transition-normal);
+      z-index: 50;
+    }
+
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .toast span.icon {
+      font-size: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .wrapper {
+        padding-inline: 12px;
+      }
+
+      .card {
+        border-radius: 14px;
+      }
+
+      .page-header h1 {
+        font-size: 24px;
+      }
+
+      .grid {
+        gap: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sticky header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-logo">💰</div>
+        <div class="brand-text">
+          <span> Settings</span>
+          <span>Tune how your money app behaves</span>
+        </div>
+      </div>
+      <a href="dashboard.html" class="back-link">
+        <span class="icon">←</span>
+        <span>Back to Dashboard</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="wrapper">
+    <div class="page-header">
+      <div>
+        <h1>Control Centre</h1>
+        <p></p>
+      </div>
+      <div class="tag">
+        <span class="tag-dot"></span>
+        <span>Local only · No cloud sync</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT COLUMN -->
+      <section class="left">
+        <!-- Profile & Identity -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">👤</span>
+                <span>Profile & Identity</span>
+              </div>
+              <div class="card-subtitle">
+                
+              </div>
+            </div>
+            <span class="chip">Local profile</span>
+          </div>
+
+          <div class="card-body">
+            <div class="field-row">
+              <div class="field" style="flex: 1 1 60%;">
+                <label for="displayNameInput">Display name</label>
+                <input id="displayNameInput" type="text" placeholder="Alex Chen" />
+                <div class="setting-meta">.</div>
+              </div>
+              <div class="field" style="flex: 1 1 30%;">
+                <label for="avatarInitialInput">Avatar initial</label>
+                <input id="avatarInitialInput" type="text" maxlength="2" placeholder="A" />
+                <div class="setting-meta">.</div>
+              </div>
+            </div>
+
+            <button id="saveProfileBtn" class="btn btn-primary">
+              <span>💾 Save profile</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Money & Plans -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">💸</span>
+                <span>Money & Plan Settings</span>
+              </div>
+              <div class="card-subtitle">
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="field-row">
+              <div class="field" style="flex: 1 1 60%;">
+                <label for="salarySettingsInput">Monthly salary (₹)</label>
+                <input id="salarySettingsInput" type="number" min="0" placeholder="e.g. 50,000" inputmode="numeric" />
+                <div class="setting-meta"></div>
+              </div>
+              <div class="field" style="flex: 1 1 40%; align-self: flex-end;">
+                <button id="saveSalarySettingsBtn" class="btn btn-primary">
+                  <span>💾 Save salary</span>
+                </button>
+              </div>
+            </div>
+
+            <div style="margin-top: 4px;">
+              <div class="setting-label">
+                <span>Current plan snapshot</span>
+                <span id="planStatusLabel">No plan saved</span>
+              </div>
+              <div class="setting-meta" id="planSummaryText" style="margin-top: 4px;">
+                —
+              </div>
+            </div>
+
+            <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+              <button id="resetPlanBtn" class="btn btn-ghost btn-sm">
+                <span>🧹 Clear saved plan</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">🏷️</span>
+                <span>Expense Categories</span>
+              </div>
+              <div class="card-subtitle">
+               
+              </div>
+            </div>
+            <span class="chip" id="categoryCountChip">0 categories</span>
+          </div>
+
+          <div class="card-body">
+            <div class="field-row">
+              <div class="field" style="flex: 1 1 70%;">
+                <label for="newCategoryInput">Add category</label>
+                <input id="newCategoryInput" type="text" placeholder="e.g. Groceries, Freelance, Gym" />
+              </div>
+              <div class="field" style="flex: 1 1 30%; align-self: flex-end;">
+                <button id="addCategoryBtn" class="btn btn-primary btn-sm">
+                  <span>＋ Add</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="category-list" id="categoryList">
+              <!-- populated via JS -->
+            </div>
+
+            <div class="setting-meta" style="margin-top: 6px;">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN -->
+      <section class="right">
+        <!-- Appearance & Theme -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">🎨</span>
+                <span>Appearance</span>
+              </div>
+              <div class="card-subtitle">
+               
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+              <div class="setting-label">
+                <span>Dark mode</span>
+                <span></span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="themeToggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Behaviour -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">📊</span>
+                <span>Dashboard Behaviour</span>
+              </div>
+              <div class="card-subtitle">
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="field">
+              <label for="defaultTabSelect">Default dashboard tab</label>
+              <select id="defaultTabSelect">
+                <option value="add">➕ Add Expense</option>
+                <option value="track">📊 Track Spending</option>
+                <option value="goals">🎯 Goals</option>
+              </select>
+            </div>
+            <div class="setting-meta">
+              
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">🔔</span>
+                <span>Notification Preferences</span>
+              </div>
+              <div class="card-subtitle">
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div class="setting-label">
+                  <span>Monthly spending summary</span>
+                  <span><code></code></span>
+                </div>
+                <label class="switch">
+                  <input id="notifyMonthly" type="checkbox">
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div class="setting-label">
+                  <span>Goal progress nudges</span>
+                  <span> <code></code></span>
+                </div>
+                <label class="switch">
+                  <input id="notifyGoals" type="checkbox">
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div class="setting-label">
+                  <span>Product & feature tips</span>
+                  <span> <code></code></span>
+                </div>
+                <label class="switch">
+                  <input id="notifyTips" type="checkbox">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security & Data -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="icon">🛡️</span>
+                <span>Security & Data</span>
+              </div>
+              <div class="card-subtitle">
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="field">
+              <div class="setting-label">
+                
+              </div>
+              <div class="setting-meta">
+             
+              </div>
+              <button id="clearDataBtn" class="btn btn-danger btn-sm" style="margin-top:8px;">
+                <span>🧨 Clear local data</span>
+              </button>
+            </div>
+
+            <div class="field" style="margin-top: 10px;">
+              <div class="setting-label">
+                <span>Sign out on this device</span>
+                
+              </div>
+              <button id="signOutBtn" class="btn btn-ghost btn-sm" style="margin-top:8px;">
+                <span>🚪 Sign out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+      <span class="icon">✅</span>
+      <span id="toastMessage">Saved</span>
+    </div>
+  </main>
+
+  <script>
+    // =========================================================
+    // AUTH CHECK
+    // =========================================================
+    const CURRENT_KEY = 'currentUser';
+    if (!localStorage.getItem(CURRENT_KEY)) {
+      window.location.href = 'index.html';
+    }
+
+    // =========================================================
+    // CONSTANT KEYS
+    // =========================================================
+    const SALARY_KEY = 'salary';
+    const PLAN_KEY = 'planData';
+    const EXPENSES_KEY = 'userExpenses';
+    const CATEGORIES_KEY = 'userCategories';
+    const DASHBOARD_STATE_KEY = 'dashboardState';
+    const THEME_KEY = 'appTheme';
+    const DEFAULT_TAB_KEY = 'defaultDashboardTab';
+    const USER_PROFILE_KEY = 'userProfile';
+    const NOTIFY_MONTHLY_KEY = 'notifyMonthlySummary';
+    const NOTIFY_GOALS_KEY = 'notifyGoals';
+    const NOTIFY_TIPS_KEY = 'notifyTips';
+
+    const DEFAULT_CATEGORIES = [
+      'Food', 'Rent', 'Travel', 'Vehicle loan',
+      'Home loan', 'Education', 'Entertainment',
+      'Shopping', 'Utilities', 'Other'
+    ];
+
+    // =========================================================
+    // UTIL: TOAST
+    // =========================================================
+    const toastEl = document.getElementById('toast');
+    const toastMsgEl = document.getElementById('toastMessage');
+
+    function showToast(message) {
+      toastMsgEl.textContent = message;
+      toastEl.classList.add('show');
+      setTimeout(() => {
+        toastEl.classList.remove('show');
+      }, 1800);
+    }
+
+    // =========================================================
+    // THEME
+    // =========================================================
+    const themeToggle = document.getElementById('themeToggle');
+
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.body.classList.add('theme-dark');
+        themeToggle.checked = true;
+      } else {
+        document.body.classList.remove('theme-dark');
+        themeToggle.checked = false;
+      }
+    }
+
+    function initTheme() {
+      const stored = localStorage.getItem(THEME_KEY) || 'light';
+      applyTheme(stored);
+    }
+
+    themeToggle.addEventListener('change', () => {
+      const theme = themeToggle.checked ? 'dark' : 'light';
+      localStorage.setItem(THEME_KEY, theme);
+      applyTheme(theme);
+      showToast('Theme updated');
+    });
+
+    // =========================================================
+    // PROFILE
+    // =========================================================
+    const displayNameInput = document.getElementById('displayNameInput');
+    const avatarInitialInput = document.getElementById('avatarInitialInput');
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+
+    function initProfile() {
+      try {
+        const raw = localStorage.getItem(USER_PROFILE_KEY);
+        if (raw) {
+          const profile = JSON.parse(raw);
+          if (profile && typeof profile === 'object') {
+            if (profile.name) displayNameInput.value = profile.name;
+            if (profile.avatarInitial) avatarInitialInput.value = profile.avatarInitial;
+          }
+        }
+      } catch (e) {
+        console.error('Error loading profile', e);
+      }
+    }
+
+    function saveProfile() {
+      const name = displayNameInput.value.trim() || 'Alex Chen';
+      let avatarInitial = avatarInitialInput.value.trim();
+      if (!avatarInitial) avatarInitial = name.charAt(0).toUpperCase();
+      if (avatarInitial.length > 2) avatarInitial = avatarInitial.slice(0, 2);
+
+      const profile = { name, avatarInitial };
+      localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
+      showToast('Profile saved');
+    }
+
+    saveProfileBtn.addEventListener('click', saveProfile);
+
+    // =========================================================
+    // SALARY & PLAN
+    // =========================================================
+    const salarySettingsInput = document.getElementById('salarySettingsInput');
+    const saveSalarySettingsBtn = document.getElementById('saveSalarySettingsBtn');
+    const planStatusLabel = document.getElementById('planStatusLabel');
+    const planSummaryText = document.getElementById('planSummaryText');
+    const resetPlanBtn = document.getElementById('resetPlanBtn');
+
+    function initSalaryAndPlan() {
+      const salary = Number(localStorage.getItem(SALARY_KEY)) || '';
+      salarySettingsInput.value = salary ? salary : '';
+
+      const planRaw = localStorage.getItem(PLAN_KEY);
+      if (!planRaw) {
+        planStatusLabel.textContent = 'No plan saved';
+        planSummaryText.textContent = 'Use the dashboard to set a plan with Invest / Save / Essentials.';
+      } else {
+        try {
+          const p = JSON.parse(planRaw);
+          planStatusLabel.textContent = 'Plan active';
+          const invPct = p.investPercent ?? '—';
+          const savPct = p.savePercent ?? '—';
+          const essPct = p.essentialPercent ?? '—';
+          const invAmt = p.investAmount ?? 0;
+          const savAmt = p.saveAmount ?? 0;
+          const essAmt = p.essentialAmount ?? 0;
+          planSummaryText.textContent =
+            `Invest ${invPct}% (₹${invAmt.toLocaleString('en-IN')}), ` +
+            `Save ${savPct}% (₹${savAmt.toLocaleString('en-IN')}), ` +
+            `Essentials ${essPct}% (₹${essAmt.toLocaleString('en-IN')})`;
+        } catch (e) {
+          console.error('Error parsing planData', e);
+          planStatusLabel.textContent = 'Plan data corrupted';
+          planSummaryText.textContent = 'You can clear the plan and set a fresh one from the dashboard.';
+        }
+      }
+    }
+
+    function saveSalarySettings() {
+      const val = Number(salarySettingsInput.value);
+      if (isNaN(val) || val < 0) {
+        alert('Please enter a valid salary amount.');
+        return;
+      }
+      localStorage.setItem(SALARY_KEY, String(Math.round(val)));
+      showToast('Salary saved');
+    }
+
+    function resetPlan() {
+      if (!localStorage.getItem(PLAN_KEY)) {
+        showToast('No plan to clear');
+        return;
+      }
+      if (!confirm('Clear your saved plan data? You can always create a new plan from the dashboard.')) {
+        return;
+      }
+      localStorage.removeItem(PLAN_KEY);
+      initSalaryAndPlan();
+      showToast('Plan cleared');
+    }
+
+    saveSalarySettingsBtn.addEventListener('click', saveSalarySettings);
+    resetPlanBtn.addEventListener('click', resetPlan);
+
+    // =========================================================
+    // CATEGORIES
+    // =========================================================
+    const categoryListEl = document.getElementById('categoryList');
+    const newCategoryInput = document.getElementById('newCategoryInput');
+    const addCategoryBtn = document.getElementById('addCategoryBtn');
+    const categoryCountChip = document.getElementById('categoryCountChip');
+
+    function getStoredCategories() {
+      try {
+        const raw = localStorage.getItem(CATEGORIES_KEY);
+        if (!raw) return [...DEFAULT_CATEGORIES];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed) || !parsed.length) return [...DEFAULT_CATEGORIES];
+        return parsed;
+      } catch (e) {
+        console.error('Error parsing categories', e);
+        return [...DEFAULT_CATEGORIES];
+      }
+    }
+
+    function setStoredCategories(cats) {
+      const cleaned = Array.from(new Set(cats.map(c => c.trim()).filter(Boolean)));
+      localStorage.setItem(CATEGORIES_KEY, JSON.stringify(cleaned));
+      return cleaned;
+    }
+
+    function renderCategories() {
+      const categories = getStoredCategories();
+      categoryListEl.innerHTML = '';
+      categoryCountChip.textContent = `${categories.length} categories`;
+
+      if (!categories.length) {
+        const div = document.createElement('div');
+        div.className = 'setting-meta';
+        div.textContent = 'No categories yet. Add your first one above.';
+        categoryListEl.appendChild(div);
+        return;
+      }
+
+      categories.forEach((cat, index) => {
+        const item = document.createElement('div');
+        item.className = 'category-item';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'name';
+        nameSpan.textContent = cat;
+
+        const actions = document.createElement('div');
+        actions.className = 'category-actions';
+
+        if (index < DEFAULT_CATEGORIES.length && DEFAULT_CATEGORIES.includes(cat)) {
+          const pill = document.createElement('span');
+          pill.className = 'pill-muted';
+          pill.textContent = 'default';
+          actions.appendChild(pill);
+        }
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-danger btn-sm btn-icon';
+        deleteBtn.type = 'button';
+        deleteBtn.textContent = '✕';
+        deleteBtn.title = 'Remove category';
+
+        deleteBtn.addEventListener('click', () => {
+          const current = getStoredCategories();
+          const filtered = current.filter(c => c !== cat);
+          setStoredCategories(filtered);
+          renderCategories();
+          showToast('Category removed');
+        });
+
+        actions.appendChild(deleteBtn);
+        item.appendChild(nameSpan);
+        item.appendChild(actions);
+        categoryListEl.appendChild(item);
+      });
+    }
+
+    function addCategory() {
+      const val = newCategoryInput.value.trim();
+      if (!val) {
+        alert('Type a category name first.');
+        return;
+      }
+      let categories = getStoredCategories();
+      if (categories.includes(val)) {
+        showToast('Category already exists');
+        newCategoryInput.value = '';
+        return;
+      }
+      categories.push(val);
+      categories = setStoredCategories(categories);
+      newCategoryInput.value = '';
+      renderCategories();
+      showToast('Category added');
+    }
+
+    addCategoryBtn.addEventListener('click', addCategory);
+    newCategoryInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addCategory();
+      }
+    });
+
+    // =========================================================
+    // DASHBOARD DEFAULT TAB
+    // =========================================================
+    const defaultTabSelect = document.getElementById('defaultTabSelect');
+
+    function initDefaultTab() {
+      const stored = localStorage.getItem(DEFAULT_TAB_KEY) || 'add';
+      defaultTabSelect.value = stored;
+    }
+
+    defaultTabSelect.addEventListener('change', () => {
+      const value = defaultTabSelect.value || 'add';
+      localStorage.setItem(DEFAULT_TAB_KEY, value);
+      showToast('Dashboard default tab saved');
+    });
+
+    // =========================================================
+    // NOTIFICATION FLAGS (LOCAL ONLY)
+    // =========================================================
+    const notifyMonthlyCheckbox = document.getElementById('notifyMonthly');
+    const notifyGoalsCheckbox = document.getElementById('notifyGoals');
+    const notifyTipsCheckbox = document.getElementById('notifyTips');
+
+    function initNotifications() {
+      notifyMonthlyCheckbox.checked = localStorage.getItem(NOTIFY_MONTHLY_KEY) === 'true';
+      notifyGoalsCheckbox.checked = localStorage.getItem(NOTIFY_GOALS_KEY) === 'true';
+      notifyTipsCheckbox.checked = localStorage.getItem(NOTIFY_TIPS_KEY) === 'true';
+    }
+
+    function bindNotificationToggle(el, key, label) {
+      el.addEventListener('change', () => {
+        localStorage.setItem(key, el.checked ? 'true' : 'false');
+        showToast(`${label} preference saved`);
+      });
+    }
+
+    bindNotificationToggle(notifyMonthlyCheckbox, NOTIFY_MONTHLY_KEY, 'Monthly summary');
+    bindNotificationToggle(notifyGoalsCheckbox, NOTIFY_GOALS_KEY, 'Goal nudges');
+    bindNotificationToggle(notifyTipsCheckbox, NOTIFY_TIPS_KEY, 'Tips');
+
+    // =========================================================
+    // SECURITY & DATA
+    // =========================================================
+    const clearDataBtn = document.getElementById('clearDataBtn');
+    const signOutBtn = document.getElementById('signOutBtn');
+
+    function clearLocalData() {
+      if (!confirm('Clear all local data? This will remove expenses, categories, salary, plan and dashboard state for this browser.')) {
+        return;
+      }
+      localStorage.removeItem(EXPENSES_KEY);
+      localStorage.removeItem(CATEGORIES_KEY);
+      localStorage.removeItem(SALARY_KEY);
+      localStorage.removeItem(PLAN_KEY);
+      localStorage.removeItem(DASHBOARD_STATE_KEY);
+      localStorage.removeItem(DEFAULT_TAB_KEY);
+      localStorage.removeItem(THEME_KEY);
+      localStorage.removeItem(USER_PROFILE_KEY);
+      localStorage.removeItem(NOTIFY_MONTHLY_KEY);
+      localStorage.removeItem(NOTIFY_GOALS_KEY);
+      localStorage.removeItem(NOTIFY_TIPS_KEY);
+
+      // Re-render parts affected
+      initSalaryAndPlan();
+      renderCategories();
+      initDefaultTab();
+      initTheme();
+      initProfile();
+      initNotifications();
+
+      showToast('Local data cleared');
+    }
+
+    function signOut() {
+      if (!confirm('Sign out of FinFlow on this device?')) return;
+      localStorage.removeItem(CURRENT_KEY);
+      window.location.href = 'index.html';
+    }
+
+    clearDataBtn.addEventListener('click', clearLocalData);
+    signOutBtn.addEventListener('click', signOut);
+
+    // =========================================================
+    // INIT
+    // =========================================================
+    window.addEventListener('load', () => {
+      initTheme();
+      initProfile();
+      initSalaryAndPlan();
+      renderCategories();
+      initDefaultTab();
+      initNotifications();
+    });
+  </script>
+</body>
+</html>
