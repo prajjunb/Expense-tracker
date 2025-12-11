@@ -838,6 +838,7 @@
 
   // ===== DATA & REPORT LOGIC =====
   const EXPENSES_KEY = 'userExpenses';
+  const API_URL = 'http://localhost:5000/api';
 
   let allExpenses = [];
   let filteredExpenses = [];
@@ -849,19 +850,21 @@
            '₹';
   }
 
-  function loadExpensesFromStorage() {
+  async function fetchExpenses() {
     try {
-      const raw = localStorage.getItem(EXPENSES_KEY);
-      if (!raw) return [];
-      const arr = JSON.parse(raw);
-      if (!Array.isArray(arr)) return [];
-      return arr.map(e => ({
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/expenses`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) return [];
+      const data = await response.json();
+      return data.map(e => ({
         ...e,
         amount: Number(e.amount) || 0,
         date: e.date || e.dateISO || new Date().toISOString()
       }));
     } catch (e) {
-      console.error('Error loading expenses', e);
+      console.error('Error fetching expenses', e);
       return [];
     }
   }
@@ -1002,8 +1005,8 @@
     renderTable();
   }
 
-  function loadAndRender() {
-    allExpenses = loadExpensesFromStorage();
+  async function loadAndRender() {
+    allExpenses = await fetchExpenses();
     applyRangeFilter();
     computeSummary();
     renderTable();

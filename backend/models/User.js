@@ -46,6 +46,19 @@ const userSchema = new mongoose.Schema({
     default: 0,
     min: 0,
   },
+  categories: {
+    type: [String],
+    default: ['Food', 'Rent', 'Travel', 'Vehicle loan', 'Home loan', 'Education', 'Entertainment', 'Shopping', 'Utilities', 'Other'],
+  },
+  planData: {
+    investPercent: { type: Number, default: 30 },
+    savePercent: { type: Number, default: 20 },
+    essentialPercent: { type: Number, default: 50 },
+    investAmount: { type: Number, default: 0 },
+    saveAmount: { type: Number, default: 0 },
+    essentialAmount: { type: Number, default: 0 },
+    appliedAt: { type: Date, default: null },
+  },
   createdAt: {
     type: Date,
     default: Date.now,

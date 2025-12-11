@@ -56,6 +56,11 @@
       --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    body[data-theme="dark"] {
+      --color-text: #ffffff;
+      --color-text-secondary: #ffffff;
+      --color-primary: #ffffff;
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
@@ -103,6 +108,52 @@
 
     body[data-theme="dark"] .color-text-secondary {
       color: #cbd5f0;
+    }
+
+    /* Dark theme for action tabs */
+    body[data-theme="dark"] .action-tab {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-color: #334155;
+    }
+
+    body[data-theme="dark"] .action-tab:hover {
+      background: #334155;
+      color: #f1f5f9;
+    }
+
+    body[data-theme="dark"] .action-tab.active {
+      background: var(--color-secondary);
+      color: white;
+    }
+
+    /* Dark theme for dropdown menu */
+    body[data-theme="dark"] .dropdown-menu {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    body[data-theme="dark"] .menu-item {
+      color: #e2e8f0;
+    }
+
+    body[data-theme="dark"] .menu-item:hover {
+      background: #334155;
+      color: #f1f5f9;
+    }
+
+    body[data-theme="dark"] .menu-item.danger:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--color-danger);
+    }
+
+    body[data-theme="dark"] .menu-divider {
+      background: #334155;
+    }
+
+    /* Dark theme for menu button hover */
+    body[data-theme="dark"] .menu-button:hover {
+      background: #334155;
     }
 
     .container {
@@ -173,10 +224,6 @@
       letter-spacing: -0.5px;
     }
 
-    body[data-theme="dark"] .logo-text {
-      color: #e2e8f0;
-    }
-
 
     .header-right {
       display: flex;
@@ -191,10 +238,6 @@
       gap: var(--spacing-md);
       padding-right: var(--spacing-md);
       border-right: 1px solid var(--color-border);
-    }
-
-    body[data-theme="dark"] .profile-section {
-      border-right-color: #334155;
     }
 
 
@@ -234,18 +277,10 @@
       color: var(--color-primary);
     }
 
-    body[data-theme="dark"] .user-name {
-      color: #e2e8f0;
-    }
-
 
     .user-status {
       font-size: 12px;
       color: var(--color-text-secondary);
-    }
-
-    body[data-theme="dark"] .user-status {
-      color: #cbd5f0;
     }
 
 
@@ -268,10 +303,6 @@
       border-radius: 8px;
     }
 
-    body[data-theme="dark"] .menu-button:hover {
-      background: #334155;
-    }
-
 
     .menu-dots {
       width: 24px;
@@ -292,7 +323,7 @@
     }
 
     body[data-theme="dark"] .dot {
-      background: #e2e8f0;
+      background: #ffffff;
     }
 
 
@@ -311,11 +342,6 @@
       border: 1px solid var(--color-border);
       overflow: hidden;
       animation: slideDown var(--transition-normal);
-    }
-
-    body[data-theme="dark"] .dropdown-menu {
-      background: #1e293b;
-      border-color: #334155;
     }
 
 
@@ -352,28 +378,16 @@
       transition: var(--transition-fast);
     }
 
-    body[data-theme="dark"] .menu-item {
-      color: #e2e8f0;
-    }
-
 
     .menu-item:hover {
       background: var(--color-lighter);
       color: var(--color-secondary);
     }
 
-    body[data-theme="dark"] .menu-item:hover {
-      background: #334155;
-    }
-
 
     .menu-item.danger:hover {
       background: rgba(239, 68, 68, 0.1);
       color: var(--color-danger);
-    }
-
-    body[data-theme="dark"] .menu-item.danger:hover {
-      background: rgba(239, 68, 68, 0.2);
     }
 
 
@@ -390,10 +404,6 @@
       height: 1px;
       background: var(--color-border);
       margin: 8px 0;
-    }
-
-    body[data-theme="dark"] .menu-divider {
-      background: #334155;
     }
 
 
@@ -414,19 +424,11 @@
       margin-bottom: 8px;
     }
 
-    body[data-theme="dark"] .welcome-section h1 {
-      color: #e2e8f0;
-    }
-
 
     .welcome-section p {
       font-size: 16px;
       color: var(--color-text-secondary);
       margin-bottom: 0;
-    }
-
-    body[data-theme="dark"] .welcome-section p {
-      color: #cbd5f0;
     }
 
 
@@ -436,25 +438,23 @@
 
 
     .action-tabs {
-      display: flex;
-      gap: 0;
-      background: var(--color-white);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      background: var(--color-border);
+      padding: 4px;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: var(--shadow-sm);
       margin-bottom: var(--spacing-lg);
-    }
-
-    body[data-theme="dark"] .action-tabs {
-      background: #1e293b;
+      border: 1px solid var(--color-border);
     }
 
 
     .action-tab {
-      flex: 1;
-      padding: 14px 16px;
+      padding: 14px 14px;
       border: none;
-      background: none;
+      background: var(--color-white);
       cursor: pointer;
       font-weight: 600;
       font-size: 14px;
@@ -464,18 +464,10 @@
       position: relative;
     }
 
-    body[data-theme="dark"] .action-tab {
-      color: #cbd5f0;
-    }
-
 
     .action-tab:hover {
       background: var(--color-lighter);
       color: var(--color-secondary);
-    }
-
-    body[data-theme="dark"] .action-tab:hover {
-      background: #334155;
     }
 
 
@@ -522,10 +514,6 @@
       padding-bottom: var(--spacing-md);
       border-bottom: 2px solid var(--color-secondary);
       display: inline-block;
-    }
-
-    body[data-theme="dark"] .section-title {
-      color: #e2e8f0;
     }
 
 
@@ -593,20 +581,12 @@
       color: var(--color-primary);
     }
 
-    body[data-theme="dark"] .plan-name {
-      color: #e2e8f0;
-    }
-
 
     .plan-desc {
       color: var(--color-text-secondary);
       font-size: 13px;
       margin-bottom: var(--spacing-lg);
       line-height: 1.6;
-    }
-
-    body[data-theme="dark"] .plan-desc {
-      color: #cbd5f0;
     }
 
 
@@ -691,10 +671,6 @@
       color: var(--color-primary);
     }
 
-    body[data-theme="dark"] .slider-title {
-      color: #e2e8f0;
-    }
-
 
     .slider-value {
       background: var(--gradient-primary);
@@ -764,10 +740,6 @@
       border-bottom: 1px solid var(--color-border);
     }
 
-    body[data-theme="dark"] .breakdown-item {
-      border-bottom-color: #334155;
-    }
-
 
     .breakdown-item:last-child {
       border-bottom: none;
@@ -778,10 +750,6 @@
       font-size: 14px;
       color: var(--color-text-secondary);
       font-weight: 600;
-    }
-
-    body[data-theme="dark"] .breakdown-label {
-      color: #cbd5f0;
     }
 
 
@@ -870,6 +838,7 @@
       background: rgba(0, 0, 0, 0.5);
       z-index: 999;
       display: none;
+      -webkit-backdrop-filter: blur(4px);
       backdrop-filter: blur(4px);
       animation: fadeIn var(--transition-normal);
     }
@@ -1091,7 +1060,7 @@
 
         <!-- Three Dot Menu -->
         <div style="position: relative;">
-          <button class="menu-button" id="menuBtn">
+          <button class="menu-button" id="menuBtn" title="Menu">
             <div class="menu-dots">
               <div class="dot"></div>
               <div class="dot"></div>
@@ -1160,7 +1129,7 @@
 
 <!-- Action Tabs -->
 <div class="action-tabs">
-  <button class="action-tab active" onclick="navigateToAddExpense()">➕ Add Expense</button>
+  <button class="action-tab active" onclick="navigateToAddExpense()">➕ Add Expense </button>
 
   <button class="action-tab" onclick="openBillScanner()">📷 Scan Bill</button>
 
@@ -1307,13 +1276,12 @@
   <h4>💵 Edit Salary & Salary Hike</h4>
   
   <label for="salaryInput">Current Salary (₹)</label>
-  <input type="number" id="salaryInput" class="form-input" placeholder="Enter your salary" min="0" step="1000">
+  <input type="number" id="salaryInput" class="form-input" placeholder="Enter your salary" aria-label="Enter your current salary amount" title="Enter your current salary amount" min="0" step="1000">
 
-  <label>Apply Salary Hike</label>
-  <div class="hike-options">
-    <button class="hike-btn" onclick="selectHike(5)">+5%</button>
-    <button class="hike-btn" onclick="selectHike(10)">+10%</button>
-    <button class="hike-btn" onclick="selectHike(15)">+15%</button>
+  <div class="hike-options" id="hike-options">
+    <button type="button" id="hike5" class="hike-btn" onclick="selectHike(5)" aria-label="Apply 5% salary hike" title="Apply 5% salary hike">+5%</button>
+    <button type="button" id="hike10" class="hike-btn" onclick="selectHike(10)" aria-label="Apply 10% salary hike" title="Apply 10% salary hike">+10%</button>
+    <button type="button" id="hike15" class="hike-btn" onclick="selectHike(15)" aria-label="Apply 15% salary hike" title="Apply 15% salary hike">+15%</button>
   </div>
 
   <div id="hikeCalculation" style="display: none; background: rgba(102, 126, 234, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; color: var(--color-text-secondary);">
@@ -1336,59 +1304,97 @@
   /* ============================================
      AUTHENTICATION & THEME
      ============================================ */
-  const CURRENT_KEY = 'currentUser';
   
-  // Apply theme from settings
+  // Apply theme from localStorage
   function applyTheme() {
-    const theme = localStorage.getItem('appTheme') || 
-                  localStorage.getItem('theme') || 
-                  'light';
+    const theme = localStorage.getItem("appTheme") || "light";
     document.body.setAttribute('data-theme', theme);
   }
   applyTheme();
 
-  // Listen for storage changes
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'appTheme' || e.key === 'theme') {
-      applyTheme();
-    }
-    if (e.key === 'currentUser') {
-      hydrateUserHeader();
-    }
-    if (e.key === 'salary') {
-      recalcBreakdownFromUI();
-    }
-  });
-
   // ===== USER HEADER HYDRATION =====
-  function hydrateUserHeader() {
+  async function hydrateUserHeader() {
     try {
-      const userRaw = localStorage.getItem(CURRENT_KEY);
-      if (!userRaw) {
+      const token = localStorage.getItem('token');
+      if (!token) {
         window.location.href = 'index.html';
         return;
       }
-      
-      let userName = 'User';
-      let userFirstLetter = 'U';
-      
-      try {
-        const parsed = JSON.parse(userRaw);
-        if (parsed && parsed.name) {
-          userName = parsed.name;
-          userFirstLetter = parsed.name.charAt(0).toUpperCase();
-        }
-      } catch (_) {
-        userName = String(userRaw);
-        userFirstLetter = userName.charAt(0).toUpperCase();
+
+      const response = await fetch('http://localhost:5000/api/auth/me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const user = data.user;
+
+        let userName = user.name || 'User';
+        let userFirstLetter = userName.charAt(0).toUpperCase();
+
+        document.getElementById('userName').innerText = userName;
+        document.getElementById('userAvatar').innerText = userFirstLetter;
+        document.getElementById('welcomeText').innerText = `Welcome back, ${userName.split(' ')[0]}! 👋`;
+
+        // Store user data in memory for other functions
+        window.currentUser = user;
+
+        // Fetch additional user data (salary, planData)
+        await fetchUserData();
+      } else {
+        // Token invalid, redirect to login
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
       }
-      
-      document.getElementById('userName').innerText = userName;
-      document.getElementById('userAvatar').innerText = userFirstLetter;
-      document.getElementById('welcomeText').innerText = `Welcome back, ${userName.split(' ')[0]}! 👋`;
     } catch (e) {
       console.error('Error hydrating user header', e);
+      window.location.href = 'index.html';
     }
+  }
+
+  // Fetch user profile data including salary and planData
+  async function fetchUserData() {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('http://localhost:5000/api/settings', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const settings = await response.json();
+        window.userSalary = settings.salary || 0;
+        window.userPlanData = settings.planData || {
+          investPercent: 30,
+          savePercent: 20,
+          essentialPercent: 50,
+          investAmount: 0,
+          saveAmount: 0,
+          essentialAmount: 0,
+          appliedAt: null
+        };
+
+        // Update UI with fetched data
+        updateUIFromBackend();
+      }
+    } catch (e) {
+      console.error('Error fetching user data:', e);
+    }
+  }
+
+  // Update UI elements from backend data
+  function updateUIFromBackend() {
+    const planData = window.userPlanData;
+    if (planData) {
+      document.getElementById('ci').value = planData.investPercent;
+      document.getElementById('cs').value = planData.savePercent;
+      document.getElementById('ce').value = planData.essentialPercent;
+      document.getElementById('invPctDisplay').innerText = planData.investPercent;
+      document.getElementById('savPctDisplay').innerText = planData.savePercent;
+      document.getElementById('essPctDisplay').innerText = planData.essentialPercent;
+    }
+    recalcBreakdownFromUI();
   }
 
   hydrateUserHeader();
@@ -1435,6 +1441,8 @@
 
   function navigateToPage(page) {
     saveDashboardState(page);
+    // Set flag to indicate navigation from dashboard
+    sessionStorage.setItem('fromOtherPage', 'true');
     window.location.href = page;
   }
 
@@ -1460,7 +1468,7 @@
   let selectedHikePercent = 0;
 
   function openSalaryEditor() {
-    const cur = Number(localStorage.getItem('salary')) || '';
+    const cur = Number(window.userSalary) || '';
     document.getElementById('salaryInput').value = cur ? cur : '';
     selectedHikePercent = 0;
     document.querySelectorAll('.hike-btn').forEach(btn => btn.classList.remove('active'));
@@ -1509,9 +1517,9 @@
 
   document.getElementById('salaryInput').addEventListener('input', updateHikeCalculation);
 
-  function saveSalary() {
+  async function saveSalary() {
     let salary = Number(document.getElementById('salaryInput').value);
-    
+
     if (isNaN(salary) || salary < 0) {
       alert('Please enter a valid salary amount');
       return;
@@ -1523,16 +1531,29 @@
       salary = salary + hikeAmount;
     }
 
-    localStorage.setItem('salary', String(Math.round(salary)));
-    recalcBreakdownFromUI();
-    closeSalaryEditor();
-    alert('✅ Salary updated successfully!');
-  }
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ salary: Math.round(salary) })
+      });
 
-
-  // Open salary editor on first load if not set
-  if (!localStorage.getItem('salary')) {
-    setTimeout(openSalaryEditor, 500);
+      if (response.ok) {
+        window.userSalary = Math.round(salary);
+        recalcBreakdownFromUI();
+        closeSalaryEditor();
+        alert('✅ Salary updated successfully!');
+      } else {
+        alert('❌ Failed to update salary');
+      }
+    } catch (error) {
+      console.error('Error updating salary:', error);
+      alert('❌ Error updating salary');
+    }
   }
 
 
@@ -1541,22 +1562,19 @@
      ============================================ */
 
 
-  function applyPreset(investPct, savePct, essPct) {
-    const salary = Number(localStorage.getItem('salary')) || 0;
+  async function applyPreset(investPct, savePct, essPct) {
+    const salary = Number(window.userSalary) || 0;
     if (!salary) {
       alert('Please set your salary first');
       openSalaryEditor();
       return;
     }
 
-
     const investAmt = Math.round(salary * investPct / 100);
     const saveAmt = Math.round(salary * savePct / 100);
     const essAmt = Math.round(salary * essPct / 100);
 
-
-    // Store plan data in localStorage
-    localStorage.setItem('planData', JSON.stringify({
+    const planData = {
       investPercent: investPct,
       savePercent: savePct,
       essentialPercent: essPct,
@@ -1564,20 +1582,39 @@
       saveAmount: saveAmt,
       essentialAmount: essAmt,
       appliedAt: new Date().toISOString()
-    }));
+    };
 
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ planData: planData })
+      });
 
-    document.getElementById('o1').innerText = '₹' + investAmt.toLocaleString('en-IN');
-    document.getElementById('o2').innerText = '₹' + saveAmt.toLocaleString('en-IN');
-    document.getElementById('o3').innerText = '₹' + essAmt.toLocaleString('en-IN');
+      if (response.ok) {
+        window.userPlanData = planData;
+        document.getElementById('o1').innerText = '₹' + investAmt.toLocaleString('en-IN');
+        document.getElementById('o2').innerText = '₹' + saveAmt.toLocaleString('en-IN');
+        document.getElementById('o3').innerText = '₹' + essAmt.toLocaleString('en-IN');
 
-
-    document.getElementById('ci').value = investPct;
-    document.getElementById('cs').value = savePct;
-    document.getElementById('ce').value = essPct;
-    document.getElementById('invPctDisplay').innerText = investPct;
-    document.getElementById('savPctDisplay').innerText = savePct;
-    document.getElementById('essPctDisplay').innerText = essPct;
+        document.getElementById('ci').value = investPct;
+        document.getElementById('cs').value = savePct;
+        document.getElementById('ce').value = essPct;
+        document.getElementById('invPctDisplay').innerText = investPct;
+        document.getElementById('savPctDisplay').innerText = savePct;
+        document.getElementById('essPctDisplay').innerText = essPct;
+        alert('✅ Plan applied successfully!');
+      } else {
+        alert('❌ Failed to apply plan');
+      }
+    } catch (error) {
+      console.error('Error applying preset:', error);
+      alert('❌ Error applying plan');
+    }
   }
 
 
@@ -1613,8 +1650,8 @@
   cs.addEventListener('input', refreshCustomDisplays);
 
 
-  document.getElementById('applyCustomBtn').addEventListener('click', () => {
-    const salary = Number(localStorage.getItem('salary')) || 0;
+  document.getElementById('applyCustomBtn').addEventListener('click', async () => {
+    const salary = Number(window.userSalary) || 0;
     if (!salary) {
       alert('Please set your salary first');
       openSalaryEditor();
@@ -1624,14 +1661,11 @@
     const savePct = Number(cs.value);
     const essPct = Number(ce.value);
 
-
     const investAmt = Math.round(salary * investPct / 100);
     const saveAmt = Math.round(salary * savePct / 100);
     const essAmt = Math.round(salary * essPct / 100);
 
-
-    // Store custom plan data in localStorage
-    localStorage.setItem('planData', JSON.stringify({
+    const planData = {
       investPercent: investPct,
       savePercent: savePct,
       essentialPercent: essPct,
@@ -1639,17 +1673,37 @@
       saveAmount: saveAmt,
       essentialAmount: essAmt,
       appliedAt: new Date().toISOString()
-    }));
+    };
 
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ planData: planData })
+      });
 
-    document.getElementById('o1').innerText = '₹' + investAmt.toLocaleString('en-IN');
-    document.getElementById('o2').innerText = '₹' + saveAmt.toLocaleString('en-IN');
-    document.getElementById('o3').innerText = '₹' + essAmt.toLocaleString('en-IN');
+      if (response.ok) {
+        window.userPlanData = planData;
+        document.getElementById('o1').innerText = '₹' + investAmt.toLocaleString('en-IN');
+        document.getElementById('o2').innerText = '₹' + saveAmt.toLocaleString('en-IN');
+        document.getElementById('o3').innerText = '₹' + essAmt.toLocaleString('en-IN');
+        alert('✅ Custom plan applied successfully!');
+      } else {
+        alert('❌ Failed to apply custom plan');
+      }
+    } catch (error) {
+      console.error('Error applying custom plan:', error);
+      alert('❌ Error applying custom plan');
+    }
   });
 
 
   function recalcBreakdownFromUI() {
-    const salary = Number(localStorage.getItem('salary')) || 0;
+    const salary = Number(window.userSalary) || 0;
     if (!salary) return;
     const investPct = Number(ci.value);
     const savePct = Number(cs.value);
@@ -1675,7 +1729,23 @@
   }
 
 
-  function logout() {
+  async function logout() {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch('http://localhost:5000/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+
+    // Clear local storage regardless of API call success
+    localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
     localStorage.removeItem('dashboardState');
     window.location.href = 'index.html';

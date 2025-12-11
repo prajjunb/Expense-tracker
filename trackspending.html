@@ -522,6 +522,7 @@
   const SETTINGS_KEY = "userSettings";
   const EXPENSES_KEY = "userExpenses";
   const CURRENCY_SYMBOLS = { INR: "₹", USD: "$", EUR: "€", GBP: "£", JPY: "¥", AUD: "A$", CAD: "C$" };
+  const API_URL = 'http://localhost:5000/api';
 
   function getSettings() {
     try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; }
@@ -535,16 +536,22 @@
 
   function applySettingsToPage() {
     const settings = getSettings();
-    const theme = settings.theme === "dark" ? "dark" : "light";
+    const theme = localStorage.getItem("appTheme") || "light";
     const currency = settings.currency || "INR";
     document.documentElement.setAttribute("data-theme", theme);
     document.getElementById("themeLabel").innerText = theme === "dark" ? "Dark" : "Light";
     document.getElementById("currencyLabel").innerText = currency;
   }
 
-  function loadExpenses() {
-    try { return JSON.parse(localStorage.getItem(EXPENSES_KEY)) || []; }
-    catch { return []; }
+  async function loadExpenses() {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/expenses`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) return [];
+      return await res.json();
+    } catch { return []; }
   }
 
   function getMonthStart() {
@@ -574,8 +581,8 @@
     });
   }
 
-  function calculateStats(months = 1) {
-    const expenses = loadExpenses();
+  async function calculateStats(months = 1) {
+    const expenses = await loadExpenses();
     
     let thisMonth, lastMonth;
     if (months === 1) {
@@ -610,12 +617,12 @@
     return { startDate, endDate };
   }
 
-  function switchPeriod(event, months) {
+  async function switchPeriod(event, months) {
     currentPeriod = months;
     document.querySelectorAll(".period-tab").forEach(tab => tab.classList.remove("active"));
     event.target.classList.add("active");
     
-    const stats = calculateStats(months);
+    const stats = await calculateStats(months);
     updateCharts(stats.thisMonth);
     updateInsights(stats);
     updateSuggestions(stats);
@@ -698,9 +705,9 @@
     document.getElementById("chartInfo").innerHTML = `<strong>Spending Trends:</strong> ${trendLabels.length} days | Average: ₹${avg}`;
   }
 
-  function renderComparisonChart(ctx) {
+  async function renderComparisonChart(ctx) {
     const thisMonthExpenses = chartDataCache.thisMonthExpenses || [];
-    const expenses = loadExpenses();
+    const expenses = await loadExpenses();
     const lastMonth = filterExpensesByDate(expenses, getLastMonthStart(), getLastMonthEnd());
     const thisMonthCat = {};
     thisMonthExpenses.forEach(e => { thisMonthCat[e.category] = (thisMonthCat[e.category] || 0) + e.amount; });
@@ -767,8 +774,8 @@
     document.getElementById("chartInfo").innerHTML = `<strong>Monthly Bar Chart:</strong> ${labels.length} categories | Total: ₹${total.toLocaleString()}`;
   }
 
-  function updateDashboard() {
-    const stats = calculateStats();
+  async function updateDashboard() {
+    const stats = await calculateStats();
     const symbol = getCurrencySymbol();
     document.getElementById("totalSpent").innerText = symbol + stats.thisMonthTotal.toLocaleString("en-IN");
     document.getElementById("avgDaily").innerText = symbol + Math.round(stats.avgDaily).toLocaleString("en-IN");
@@ -843,7 +850,7 @@
     document.getElementById("insightsContainer").innerHTML = insights.map(s => `<div class="insight-box">${s}</div>`).join("");
   }
 
-  function applyFilters() {
+  async function applyFilters() {
     const category = document.getElementById("filterCategory").value;
     const startDate = new Date(document.getElementById("startDate").value);
     const endDate = new Date(document.getElementById("endDate").value);
@@ -853,7 +860,7 @@
       return;
     }
 
-    let expenses = loadExpenses();
+    let expenses = await loadExpenses();
     expenses = filterExpensesByDate(expenses, startDate, endDate);
     if (category !== "all") {
       expenses = expenses.filter(e => e.category === category);
@@ -870,8 +877,8 @@
     document.getElementById("filterInsights").innerHTML = "";
   }
 
-  function exportCSV() {
-    const expenses = loadExpenses();
+  async function exportCSV() {
+    const expenses = await loadExpenses();
     const thisMonth = filterExpensesByDate(expenses, getMonthStart(), getMonthEnd());
     let csv = "Date,Category,Amount,Note,Currency\n";
     thisMonth.forEach(e => {
@@ -884,8 +891,8 @@
     link.click();
   }
 
-  function exportPDF() {
-    const stats = calculateStats();
+  async function exportPDF() {
+    const stats = await calculateStats();
     const symbol = getCurrencySymbol();
     const element = document.createElement("div");
     element.style.padding = "20px";

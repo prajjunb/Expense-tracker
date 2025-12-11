@@ -586,6 +586,7 @@
   const SETTINGS_KEY = "userSettings";
   const EXPENSES_KEY = "userExpenses";
   const GOALS_KEY = "userGoals";
+  const API_URL = 'http://localhost:5000/api';
 
   const CURRENCY_SYMBOLS = {
     INR: "₹", USD: "$", EUR: "€", GBP: "£", JPY: "¥", AUD: "A$", CAD: "C$"
@@ -609,25 +610,89 @@
 
   function applySettingsToPage() {
     const settings = getSettings();
-    const theme = settings.theme === "dark" ? "dark" : "light";
+    const theme = localStorage.getItem("appTheme") || "light";
     const currency = settings.currency || "INR";
     document.documentElement.setAttribute("data-theme", theme);
     document.getElementById("themeLabel").innerText = theme === "dark" ? "Dark" : "Light";
     document.getElementById("currencyLabel").innerText = currency;
   }
 
-  function loadExpenses() {
-    try { return JSON.parse(localStorage.getItem(EXPENSES_KEY)) || []; }
-    catch { return []; }
+  // ============================================
+  // STORAGE MANAGER (MongoDB)
+  // ============================================
+  class StorageManager {
+    static getHeaders() {
+      const token = localStorage.getItem('token');
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+    }
+
+    static async fetchGoals() {
+      const res = await fetch(`${API_URL}/goals`, { headers: this.getHeaders() });
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      return await res.json();
+    }
+
+    static async saveGoal(goal) {
+      const res = await fetch(`${API_URL}/goals`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify(goal)
+      });
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      return await res.json();
+    }
+
+    static async deleteGoal(id) {
+      const res = await fetch(`${API_URL}/goals/${id}`, {
+        method: 'DELETE',
+        headers: this.getHeaders()
+      });
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      return true;
+    }
   }
 
-  function loadGoals() {
-    try { return JSON.parse(localStorage.getItem(GOALS_KEY)) || []; }
-    catch { return []; }
+  // ============================================
+  // DATA FETCHING
+  // ============================================
+
+  async function fetchExpenses() {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/expenses`, { // This is correct, goals need expense data
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("API failed");
+      return await res.json();
+    } catch (e) {
+      console.error("Failed to load expenses from MongoDB:", e);
+      return [];
+    }
   }
 
-  function saveGoals(goals) {
-    localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
+  async function fetchGoals() {
+    try {
+      return await StorageManager.fetchGoals();
+    } catch (e) {
+      console.error("Failed to load goals:", e);
+      // Don't alert on load to avoid spamming, just log
+      return [];
+    }
+  }
+
+  async function saveGoalToDB(goal) {
+    try {
+      await StorageManager.saveGoal(goal);
+      alert("✓ Goal saved to MongoDB!");
+      return true;
+    } catch (e) {
+      console.error("Error saving goal:", e);
+      alert(`Failed to save goal. Server says: ${e.message}\n\nEnsure 'node server.js' is running.`);
+      return false;
+    }
   }
 
   function getMonthStart() {
@@ -679,47 +744,36 @@
     return CATEGORY_EMOJI[category] || "📌";
   }
 
-  function addGoal(event) {
+  async function addGoal(event) {
     event.preventDefault();
     
     const category = document.getElementById("goalCategory").value.trim();
     const amount = parseFloat(document.getElementById("goalAmount").value);
     const period = document.getElementById("goalPeriod").value;
-    const alert = parseInt(document.getElementById("goalAlert").value);
+    const alertThreshold = parseInt(document.getElementById("goalAlert").value);
 
     if (!category || !amount) {
       alert("Please fill all fields");
       return;
     }
 
-    const goals = loadGoals();
     const goal = {
-      id: Date.now(),
       category,
       amount,
       period,
-      alert,
+      alert: alertThreshold,
       createdAt: new Date().toISOString()
     };
 
-    goals.push(goal);
-    saveGoals(goals);
-    renderGoals();
-    document.getElementById("goalForm").reset();
-  }
-
-  function deleteGoal(id) {
-    if (confirm("Delete this goal?")) {
-      let goals = loadGoals();
-      goals = goals.filter(g => g.id !== id);
-      saveGoals(goals);
-      renderGoals();
+    const success = await saveGoalToDB(goal);
+    if (success) {
+      await renderGoals();
+      document.getElementById("goalForm").reset();
     }
   }
 
-  function renderGoals() {
-    const goals = loadGoals();
-    const expenses = loadExpenses();
+  async function renderGoals() {
+    const [goals, expenses] = await Promise.all([fetchGoals(), fetchExpenses()]);
     const container = document.getElementById("goalsContainer");
 
     if (goals.length === 0) {
@@ -745,7 +799,7 @@
 
       const percent = (spent / goal.amount * 100).toFixed(0);
       const remaining = goal.amount - spent;
-      const status = spent > goal.amount ? "exceeded" : spent > (goal.amount * goal.alert / 100) ? "warning" : "success";
+      const status = spent > goal.amount ? "exceeded" : spent > (goal.amount * (goal.alert || 80) / 100) ? "warning" : "success";
 
       if (status === "success") onTrack++;
       else if (status === "warning") warning++;
@@ -761,7 +815,7 @@
             </div>
             <div class="goal-actions">
               <span class="goal-period">${goal.period.charAt(0).toUpperCase() + goal.period.slice(1)}</span>
-              <button class="btn btn-danger" onclick="deleteGoal(${goal.id})">🗑️</button>
+              <button class="btn btn-danger" onclick="deleteGoalFromDB('${goal._id}')">🗑️</button>
             </div>
           </div>
 
@@ -792,7 +846,7 @@
       `;
     }).join("");
 
-    container.innerHTML = goalsHTML;
+    container.innerHTML = `<div class="goal-grid">${goalsHTML}</div>`;
 
     // Update summary
     document.getElementById("totalGoals").innerText = goals.length;
@@ -801,12 +855,10 @@
     document.getElementById("goalsExceeded").innerText = exceeded;
     document.getElementById("summarySection").style.display = "block";
 
-    updateSuggestions();
+    updateSuggestions(goals, expenses);
   }
 
-  function updateSuggestions() {
-    const goals = loadGoals();
-    const expenses = loadExpenses();
+  function updateSuggestions(goals, expenses) {
     const suggestions = [];
 
     goals.forEach(goal => {
@@ -821,7 +873,7 @@
 
       if (spent > goal.amount) {
         suggestions.push(`🚨 <strong>${goal.category}</strong> budget exceeded by ${symbol}${(spent - goal.amount).toLocaleString('en-IN')}`);
-      } else if (percent > goal.alert) {
+      } else if (percent > (goal.alert || 80)) {
         const daysLeft = Math.ceil((new Date(end) - new Date()) / (1000 * 60 * 60 * 24));
         suggestions.push(`⚡ <strong>${goal.category}</strong>: ${symbol}${remaining.toLocaleString('en-IN')} left for ${daysLeft} days`);
       }
@@ -837,6 +889,16 @@
     if (suggestions.length > 0) {
       sugContainer.innerHTML = suggestions.map(s => `<div style="padding: 10px; margin-bottom: 8px; background: rgba(63,103,230,0.08); border-left: 4px solid var(--accent); border-radius: 6px; font-size: 13px;">${s}</div>`).join("");
       sugSection.style.display = "block";
+    }
+  }
+
+  async function deleteGoalFromDB(id) {
+    if(!confirm("Delete this goal?")) return;
+    try {
+      await StorageManager.deleteGoal(id);
+      renderGoals();
+    } catch (e) {
+      alert("Error deleting goal from MongoDB");
     }
   }
 

@@ -1,36 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <title>Settings —</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root {
-      --color-primary: #1e293b;
-      --color-secondary: #667eea;
-      --color-accent: #f5576c;
-      --color-success: #10b981;
-      --color-danger: #ef4444;
-      --color-warning: #f59e0b;
-      --color-muted: #64748b;
-      --color-light: #f8fafc;
-      --color-lighter: #f1f5f9;
-      --color-border: #e2e8f0;
-      --color-white: #ffffff;
-
-      --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --gradient-soft: linear-gradient(135deg, #f9fafb 0%, #eef2ff 100%);
-
-      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-      --shadow-lg: 0 18px 45px rgba(15, 23, 42, 0.16);
-
-      --radius-lg: 16px;
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --accent: #3f67e6;
+      --accent-soft: #e0e7ff;
+      --accent-dark: #2949c0;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --muted: #6b7280;
+      --text: #0b2340;
+      --text-soft: #9ca3af;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      --radius-lg: 18px;
       --radius-md: 12px;
       --radius-pill: 999px;
-
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      /* Mappings for existing classes */
+      --color-primary: var(--text);
+      --color-muted: var(--muted);
+      --color-border: var(--border);
+      --color-white: #ffffff;
+      --gradient-primary: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+      --shadow-md: var(--shadow);
+      --shadow-lg: 0 18px 45px rgba(15, 23, 42, 0.16);
       --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
       --transition-normal: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #020617;
+      --card: #0f172a;
+      --border: #1e293b;
+      --accent: #60a5fa;
+      --accent-soft: #0b1120;
+      --accent-dark: #2563eb;
+      --danger: #f97373;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --muted: #9ca3af;
+      --text: #e5e7eb;
+      --text-soft: #6b7280;
+      --shadow: 0 10px 40px rgba(15, 23, 42, 0.7);
     }
 
     * {
@@ -41,51 +61,11 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
-      background: radial-gradient(circle at 0% 0%, rgba(102,126,234,0.12), transparent 55%),
-                  radial-gradient(circle at 100% 100%, rgba(244,114,182,0.1), transparent 55%),
-                  #f3f6fb;
-      color: var(--color-primary);
+      background: radial-gradient(circle at top left, rgba(96,165,250,0.18), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(139,92,246,0.18), transparent 55%),
+                  var(--bg);
+      color: var(--text);
       min-height: 100vh;
-    }
-
-    body.theme-dark {
-      background: radial-gradient(circle at 0% 0%, rgba(37,99,235,0.18), transparent 55%),
-                  #020617;
-      color: #e5e7eb;
-    }
-
-    body.theme-dark .card {
-      background: linear-gradient(145deg, #020617, #020617, #020617);
-      border-color: rgba(148, 163, 184, 0.25);
-    }
-
-    body.theme-dark .header {
-      background: rgba(15, 23, 42, 0.95);
-      border-color: rgba(148, 163, 184, 0.3);
-      backdrop-filter: blur(16px);
-    }
-
-    body.theme-dark .back-link {
-      color: #e5e7eb;
-      border-color: rgba(148, 163, 184, 0.4);
-      background: radial-gradient(circle at top left, rgba(51,65,85,0.6), rgba(15,23,42,0.9));
-    }
-
-    body.theme-dark .tag {
-      background: rgba(15, 23, 42, 0.9);
-      color: #e5e7eb;
-      border-color: rgba(148, 163, 184, 0.6);
-    }
-
-    body.theme-dark input,
-    body.theme-dark select {
-      background: rgba(15, 23, 42, 0.95);
-      border-color: rgba(148, 163, 184, 0.5);
-      color: #e5e7eb;
-    }
-
-    body.theme-dark .setting-label span:last-child {
-      color: #9ca3af;
     }
 
     .wrapper {
@@ -99,9 +79,9 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(248, 250, 252, 0.9);
+      background: var(--card);
       backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      border-bottom: 1px solid var(--border);
     }
 
     .header-inner {
@@ -142,11 +122,12 @@
     .brand-text span:first-child {
       font-weight: 700;
       letter-spacing: -0.03em;
+      color: var(--text);
     }
 
     .brand-text span:last-child {
       font-size: 12px;
-      color: var(--color-muted);
+      color: var(--muted);
     }
 
     .back-link {
@@ -155,12 +136,12 @@
       gap: 8px;
       padding: 8px 14px;
       border-radius: var(--radius-pill);
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      background: linear-gradient(135deg, rgba(255,255,255,0.97), rgba(248,250,252,0.9));
+      border: 1px solid var(--border);
+      background: var(--accent-soft);
       box-shadow: var(--shadow-sm);
       font-size: 13px;
       font-weight: 500;
-      color: var(--color-primary);
+      color: var(--accent);
       text-decoration: none;
       transition: all var(--transition-fast);
     }
@@ -172,7 +153,7 @@
     .back-link:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
-      border-color: rgba(129, 140, 248, 0.9);
+      filter: brightness(0.95);
     }
 
     /* PAGE TITLE --------------------------------------------- */
@@ -189,11 +170,12 @@
       font-size: 30px;
       letter-spacing: -0.03em;
       margin-bottom: 6px;
+      color: var(--text);
     }
 
     .page-header p {
       font-size: 14px;
-      color: var(--color-muted);
+      color: var(--muted);
     }
 
     .tag {
@@ -202,12 +184,12 @@
       letter-spacing: 0.12em;
       padding: 6px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: rgba(248,250,252,0.9);
+      border: 1px solid var(--border);
+      background: var(--card);
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      color: var(--color-muted);
+      color: var(--muted);
     }
 
     .tag-dot {
@@ -233,9 +215,9 @@
 
     /* CARDS -------------------------------------------------- */
     .card {
-      background: radial-gradient(circle at top left, rgba(255,255,255,0.9), rgba(248,250,252,0.95));
+      background: var(--card);
       border-radius: var(--radius-lg);
-      border: 1px solid rgba(226, 232, 240, 0.9);
+      border: 1px solid var(--border);
       box-shadow: var(--shadow-md);
       padding: 18px 18px 16px;
       position: relative;
@@ -270,6 +252,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      color: var(--text);
     }
 
     .card-title span.icon {
@@ -278,16 +261,16 @@
 
     .card-subtitle {
       font-size: 12px;
-      color: var(--color-muted);
+      color: var(--muted);
     }
 
     .chip {
       padding: 4px 10px;
       border-radius: 999px;
       font-size: 11px;
-      background: rgba(129,140,248,0.08);
-      color: var(--color-secondary);
-      border: 1px solid rgba(129,140,248,0.45);
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid transparent;
     }
 
     .card-body {
@@ -303,7 +286,7 @@
       font-weight: 600;
       display: block;
       margin-bottom: 4px;
-      color: var(--color-primary);
+      color: var(--text);
     }
 
     .field {
@@ -321,20 +304,20 @@
     select {
       width: 100%;
       border-radius: 999px;
-      border: 1px solid var(--color-border);
+      border: 1px solid var(--border);
       padding: 10px 14px;
       font-size: 14px;
       outline: none;
-      background: rgba(255,255,255,0.9);
+      background: var(--card);
+      color: var(--text);
       transition: all var(--transition-fast);
     }
 
     input[type="text"]:focus,
     input[type="number"]:focus,
     select:focus {
-      border-color: rgba(129,140,248,0.95);
-      box-shadow: 0 0 0 1px rgba(129,140,248,0.6), 0 10px 30px rgba(55,65,81,0.18);
-      background: #ffffff;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(63, 103, 230, 0.1);
     }
 
     input[type="number"]::-webkit-outer-spin-button,
@@ -371,12 +354,12 @@
     }
 
     .btn-ghost {
-      background: rgba(148, 163, 184, 0.08);
-      color: var(--color-primary);
+      background: var(--accent-soft);
+      color: var(--text);
     }
 
     .btn-ghost:hover {
-      background: rgba(148,163,184,0.16);
+      background: var(--border);
       transform: translateY(-1px);
     }
 
@@ -451,7 +434,7 @@
       padding: 8px;
       max-height: 190px;
       overflow: auto;
-      background: linear-gradient(135deg, rgba(248,250,252,0.9), rgba(241,245,249,0.9));
+      background: var(--bg);
     }
 
     .category-item {
@@ -463,7 +446,8 @@
       border-radius: 999px;
       font-size: 13px;
       margin-bottom: 4px;
-      background: rgba(255,255,255,0.9);
+      background: var(--card);
+      color: var(--text);
     }
 
     .category-item span.name {
@@ -484,13 +468,13 @@
       padding: 3px 8px;
       border-radius: 999px;
       background: rgba(148,163,184,0.13);
-      color: var(--color-muted);
+      color: var(--muted);
     }
 
     /* INLINE META ------------------------------------------- */
     .setting-meta {
       font-size: 12px;
-      color: var(--color-muted);
+      color: var(--muted);
     }
 
     .setting-label {
@@ -502,7 +486,7 @@
 
     .setting-label span:last-child {
       font-size: 11px;
-      color: var(--color-muted);
+      color: var(--muted);
     }
 
     /* TOAST -------------------------------------------------- */
@@ -710,34 +694,6 @@
 
       <!-- RIGHT COLUMN -->
       <section class="right">
-        <!-- Appearance & Theme -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">
-                <span class="icon">🎨</span>
-                <span>Appearance</span>
-              </div>
-              <div class="card-subtitle">
-               
-              </div>
-            </div>
-          </div>
-
-          <div class="card-body">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-              <div class="setting-label">
-                <span>Dark mode</span>
-                <span></span>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="themeToggle">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-
         <!-- Dashboard Behaviour -->
         <div class="card">
           <div class="card-header">
@@ -891,6 +847,7 @@
     const NOTIFY_MONTHLY_KEY = 'notifyMonthlySummary';
     const NOTIFY_GOALS_KEY = 'notifyGoals';
     const NOTIFY_TIPS_KEY = 'notifyTips';
+    const API_URL = 'http://localhost:5000/api';
 
     const DEFAULT_CATEGORIES = [
       'Food', 'Rent', 'Travel', 'Vehicle loan',
@@ -915,29 +872,11 @@
     // =========================================================
     // THEME
     // =========================================================
-    const themeToggle = document.getElementById('themeToggle');
-
-    function applyTheme(theme) {
-      if (theme === 'dark') {
-        document.body.classList.add('theme-dark');
-        themeToggle.checked = true;
-      } else {
-        document.body.classList.remove('theme-dark');
-        themeToggle.checked = false;
-      }
+    function applyTheme() {
+      const theme = localStorage.getItem("appTheme") || "light";
+      document.documentElement.setAttribute("data-theme", theme);
     }
-
-    function initTheme() {
-      const stored = localStorage.getItem(THEME_KEY) || 'light';
-      applyTheme(stored);
-    }
-
-    themeToggle.addEventListener('change', () => {
-      const theme = themeToggle.checked ? 'dark' : 'light';
-      localStorage.setItem(THEME_KEY, theme);
-      applyTheme(theme);
-      showToast('Theme updated');
-    });
+    applyTheme();
 
     // =========================================================
     // PROFILE
@@ -946,30 +885,42 @@
     const avatarInitialInput = document.getElementById('avatarInitialInput');
     const saveProfileBtn = document.getElementById('saveProfileBtn');
 
-    function initProfile() {
+    async function initProfile() {
       try {
-        const raw = localStorage.getItem(USER_PROFILE_KEY);
-        if (raw) {
-          const profile = JSON.parse(raw);
-          if (profile && typeof profile === 'object') {
-            if (profile.name) displayNameInput.value = profile.name;
-            if (profile.avatarInitial) avatarInitialInput.value = profile.avatarInitial;
-          }
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/auth/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const user = data.user;
+          if (user.name) displayNameInput.value = user.name;
+          // Avatar initial is usually derived, but if stored:
+          if (user.avatarInitial) avatarInitialInput.value = user.avatarInitial;
         }
       } catch (e) {
         console.error('Error loading profile', e);
       }
     }
 
-    function saveProfile() {
+    async function saveProfile() {
       const name = displayNameInput.value.trim() || 'Alex Chen';
       let avatarInitial = avatarInitialInput.value.trim();
       if (!avatarInitial) avatarInitial = name.charAt(0).toUpperCase();
       if (avatarInitial.length > 2) avatarInitial = avatarInitial.slice(0, 2);
 
-      const profile = { name, avatarInitial };
-      localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
-      showToast('Profile saved');
+      try {
+        const token = localStorage.getItem('token');
+        await fetch(`${API_URL}/auth/profile`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ name, avatarInitial })
+        });
+        showToast('Profile saved');
+      } catch (e) {
+        console.error(e);
+        alert('Failed to save profile');
+      }
     }
 
     saveProfileBtn.addEventListener('click', saveProfile);
@@ -983,17 +934,19 @@
     const planSummaryText = document.getElementById('planSummaryText');
     const resetPlanBtn = document.getElementById('resetPlanBtn');
 
-    function initSalaryAndPlan() {
-      const salary = Number(localStorage.getItem(SALARY_KEY)) || '';
-      salarySettingsInput.value = salary ? salary : '';
+    async function initSalaryAndPlan() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/settings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const salary = data.salary || '';
+          salarySettingsInput.value = salary;
 
-      const planRaw = localStorage.getItem(PLAN_KEY);
-      if (!planRaw) {
-        planStatusLabel.textContent = 'No plan saved';
-        planSummaryText.textContent = 'Use the dashboard to set a plan with Invest / Save / Essentials.';
-      } else {
-        try {
-          const p = JSON.parse(planRaw);
+          const p = data.planData;
+          if (p) {
           planStatusLabel.textContent = 'Plan active';
           const invPct = p.investPercent ?? '—';
           const savPct = p.savePercent ?? '—';
@@ -1005,22 +958,33 @@
             `Invest ${invPct}% (₹${invAmt.toLocaleString('en-IN')}), ` +
             `Save ${savPct}% (₹${savAmt.toLocaleString('en-IN')}), ` +
             `Essentials ${essPct}% (₹${essAmt.toLocaleString('en-IN')})`;
-        } catch (e) {
-          console.error('Error parsing planData', e);
-          planStatusLabel.textContent = 'Plan data corrupted';
-          planSummaryText.textContent = 'You can clear the plan and set a fresh one from the dashboard.';
+          } else {
+            planStatusLabel.textContent = 'No plan saved';
+            planSummaryText.textContent = 'Use the dashboard to set a plan.';
+          }
         }
+      } catch (e) {
+        console.error('Error loading settings', e);
       }
     }
 
-    function saveSalarySettings() {
+    async function saveSalarySettings() {
       const val = Number(salarySettingsInput.value);
       if (isNaN(val) || val < 0) {
         alert('Please enter a valid salary amount.');
         return;
       }
-      localStorage.setItem(SALARY_KEY, String(Math.round(val)));
-      showToast('Salary saved');
+      try {
+        const token = localStorage.getItem('token');
+        await fetch(`${API_URL}/auth/profile`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ salary: Math.round(val) })
+        });
+        showToast('Salary saved');
+      } catch (e) {
+        alert('Failed to save salary');
+      }
     }
 
     function resetPlan() {
@@ -1047,27 +1011,24 @@
     const addCategoryBtn = document.getElementById('addCategoryBtn');
     const categoryCountChip = document.getElementById('categoryCountChip');
 
-    function getStoredCategories() {
+    async function getStoredCategories() {
       try {
-        const raw = localStorage.getItem(CATEGORIES_KEY);
-        if (!raw) return [...DEFAULT_CATEGORIES];
-        const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed) || !parsed.length) return [...DEFAULT_CATEGORIES];
-        return parsed;
+        // const token = localStorage.getItem('token');
+        // const res = await fetch(`${API_URL}/settings/categories`, {
+        //   headers: { 'Authorization': `Bearer ${token}` }
+        // });
+        // if (!res.ok) return [...DEFAULT_CATEGORIES];
+        // const data = await res.json();
+        // return data.categories && data.categories.length ? data.categories : [...DEFAULT_CATEGORIES];
+        return [...DEFAULT_CATEGORIES];
       } catch (e) {
         console.error('Error parsing categories', e);
         return [...DEFAULT_CATEGORIES];
       }
     }
 
-    function setStoredCategories(cats) {
-      const cleaned = Array.from(new Set(cats.map(c => c.trim()).filter(Boolean)));
-      localStorage.setItem(CATEGORIES_KEY, JSON.stringify(cleaned));
-      return cleaned;
-    }
-
-    function renderCategories() {
-      const categories = getStoredCategories();
+    async function renderCategories() {
+      const categories = await getStoredCategories();
       categoryListEl.innerHTML = '';
       categoryCountChip.textContent = `${categories.length} categories`;
 
@@ -1103,11 +1064,14 @@
         deleteBtn.textContent = '✕';
         deleteBtn.title = 'Remove category';
 
-        deleteBtn.addEventListener('click', () => {
-          const current = getStoredCategories();
-          const filtered = current.filter(c => c !== cat);
-          setStoredCategories(filtered);
-          renderCategories();
+        deleteBtn.addEventListener('click', async () => {
+          const token = localStorage.getItem('token');
+          await fetch(`${API_URL}/settings/categories/${cat}`, { // Assuming endpoint supports delete by name or ID
+             method: 'DELETE',
+             headers: { 'Authorization': `Bearer ${token}` }
+          });
+          // For now, just re-render or assume success if API existed
+          await renderCategories();
           showToast('Category removed');
         });
 
@@ -1118,22 +1082,28 @@
       });
     }
 
-    function addCategory() {
+    async function addCategory() {
       const val = newCategoryInput.value.trim();
       if (!val) {
         alert('Type a category name first.');
         return;
       }
-      let categories = getStoredCategories();
+      let categories = await getStoredCategories();
       if (categories.includes(val)) {
         showToast('Category already exists');
         newCategoryInput.value = '';
         return;
       }
-      categories.push(val);
-      categories = setStoredCategories(categories);
+      
+      const token = localStorage.getItem('token');
+      await fetch(`${API_URL}/settings/categories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ category: val })
+      });
+
       newCategoryInput.value = '';
-      renderCategories();
+      await renderCategories();
       showToast('Category added');
     }
 

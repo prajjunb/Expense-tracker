@@ -490,6 +490,7 @@
   const NOTIFICATIONS_KEY = "userNotifications";
   const EXPENSES_KEY = "userExpenses";
   const GOALS_KEY = "userGoals";
+  const API_URL = 'http://localhost:5000/api';
 
   const CURRENCY_SYMBOLS = {
     INR: "₹", USD: "$", EUR: "€", GBP: "£", JPY: "¥", AUD: "A$", CAD: "C$"
@@ -507,7 +508,7 @@
 
   function applySettingsToPage() {
     const settings = getSettings();
-    const theme = settings.theme === "dark" ? "dark" : "light";
+    const theme = localStorage.getItem("appTheme") || "light";
     const currency = settings.currency || "INR";
     document.documentElement.setAttribute("data-theme", theme);
     document.getElementById("themeLabel").innerText = theme === "dark" ? "Dark" : "Light";
@@ -666,9 +667,20 @@
     renderNotifications(filter);
   }
 
-  function generateNotificationsFromExpenses() {
-    const expenses = JSON.parse(localStorage.getItem("userExpenses")) || [];
-    const goals = JSON.parse(localStorage.getItem("userGoals")) || [];
+  async function generateNotificationsFromExpenses() {
+    const token = localStorage.getItem('token');
+    let expenses = [];
+    let goals = [];
+
+    try {
+      const [expRes, goalRes] = await Promise.all([
+        fetch(`${API_URL}/expenses`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${API_URL}/goals`, { headers: { 'Authorization': `Bearer ${token}` } })
+      ]);
+      if (expRes.ok) expenses = await expRes.json();
+      if (goalRes.ok) goals = await goalRes.json();
+    } catch (e) { console.error(e); return; }
+
     const notifications = loadNotifications();
 
     const today = new Date().toLocaleDateString();

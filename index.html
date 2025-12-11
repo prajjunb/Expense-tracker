@@ -6,49 +6,332 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root {
-      --accent:#6c5ce7; /* aesthetic purple */
-      --muted:#7f8fa6;
-      --bg:#ebeefe; /* soft lavender background */
-      --card:#ffffff;
-      --radius:12px;
-    }
-    html,body{
-      height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:var(--bg);color:#0b2340;
-    }
-    .wrap{max-width:960px;margin:18px auto;padding:14px}
-    .card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 10px 28px rgba(40,40,80,0.08);margin-bottom:14px}
-    h1{font-size:20px;margin:0 0 6px}
-    h2{font-size:16px;margin:0 0 8px}
-    p.lead{margin:0 0 10px;color:var(--muted);font-size:13px}
-    label{display:block;margin-top:10px;font-weight:600;font-size:13px;color:#0b2340}
-
-    input[type="text"], input[type="email"], input[type="password"], input[type="number"]{
-      width:100%;padding:11px;border-radius:10px;border:1px solid #dfe4f5;margin-top:6px;font-size:15px;background:#f7f8ff;
+      --primary: #6366f1; /* Indigo */
+      --primary-dark: #4f46e5;
+      --secondary: #f59e0b; /* Amber */
+      --accent: #ec4899; /* Pink */
+      --muted: #64748b;
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card: rgba(255, 255, 255, 0.95);
+      --card-dark: rgba(30, 41, 59, 0.95);
+      --text: #1e293b;
+      --text-light: #f8fafc;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 30px 80px rgba(0, 0, 0, 0.15);
+      --radius: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .row{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
-
-    .btn{
-      display:inline-block;background:var(--accent);color:#fff;padding:10px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer;
-      transition:0.25s;
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text);
+      overflow-x: hidden;
     }
-    .btn:hover {background:#5547c2;}
 
-    .btn.secondary{background:#f0f1ff;color:var(--muted)}
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      pointer-events: none;
+      z-index: -1;
+    }
 
-    .small{font-size:13px;color:var(--muted);margin-top:8px}
+    .wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
 
-    .msg{margin-top:10px;padding:8px;border-radius:8px;font-size:14px}
-    .msg.error{background:#ffecec;color:#c0392b;border:1px solid #ffcdcd}
-    .msg.success{background:#46d1de;color:#0b6b3b;border:1px solid #d2f7e3}
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: var(--transition);
+      animation: slideIn 0.6s ease-out;
+      overflow: hidden;
+    }
 
-    .hidden{display:none}
-    .toggle-link{background:none;border:0;color:var(--muted);cursor:pointer;padding:0;font-size:13px}
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-4px);
+    }
 
-    .pw-meter{height:8px;border-radius:6px;background:#e4e6ff;margin-top:8px;overflow:hidden}
-    .pw-meter > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#ff4f4f,#7a5cff)}
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-    @media (max-width:720px){ .wrap{padding:12px} h1{font-size:18px} }
+    .logo-section {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      border-radius: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: white;
+      box-shadow: 0 16px 40px rgba(99, 102, 241, 0.3);
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .logo-text {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 8px 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-subtitle {
+      font-size: 16px;
+      color: #374151;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    h1 { display: none; } /* Hide old h1 */
+
+    h2 {
+      font-size: 24px;
+      margin: 0 0 20px 0;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    p.lead {
+      margin: 0 0 20px 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"] {
+      width: 100%;
+      padding: 16px 18px;
+      border-radius: 12px;
+      border: 2px solid rgba(100, 116, 139, 0.2);
+      margin-top: 0;
+      font-size: 16px;
+      background: rgba(248, 250, 252, 0.8);
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      box-sizing: border-box;
+    }
+
+    input[type="password"] {
+      padding-right: 45px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .toggle-link {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: 0;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .toggle-link:hover {
+      color: var(--primary);
+    }
+
+    .row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-top: 28px;
+      flex-direction: column;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      border: 0;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text);
+      border: 2px solid rgba(100, 116, 139, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn.secondary:hover {
+      background: white;
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .small {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 16px;
+      text-align: center;
+      display: block;
+    }
+
+    .msg {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .msg.error {
+      background: linear-gradient(135deg, #fee2e2, #fecaca);
+      color: #dc2626;
+      border: 1px solid #fca5a5;
+    }
+
+    .msg.success {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color: #059669;
+      border: 1px solid #6ee7b7;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden { display: none; }
+
+    .pw-meter {
+      height: 10px;
+      border-radius: 8px;
+      background: rgba(100, 116, 139, 0.2);
+      margin-top: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .pw-meter > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981, #3b82f6);
+      transition: width 0.3s ease;
+      border-radius: 8px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .continue-btn {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 16px; }
+      .logo-text { font-size: 24px; }
+      .card { padding: 24px; }
+    }
   </style>
 </head>
 <body>
@@ -65,13 +348,12 @@
 </script>
 
 <div class="wrap">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
-    <div>
-      <h1>Expense Tracker</h1>
-      <p class="small">Create an account or sign in.</p>
-    </div>
+  <div class="logo-section">
+    <div class="logo-icon">💰</div>
+    <div class="logo-text">Expense Tracker</div>
+    <p class="logo-subtitle">Manage your finances smartly</p>
 
-    <div>
+    <div class="continue-btn">
       <!-- Manual continue if already signed in (no auto-redirect) -->
       <button id="continueBtn" class="btn secondary hidden">Continue to dashboard</button>
     </div>
@@ -96,13 +378,13 @@
       <label for="suPassword">Password</label>
       <div style="position:relative">
         <input id="suPassword" type="password" placeholder="At least 8 characters" required />
-        <button type="button" class="toggle-link" id="toggleSuPass" style="position:absolute;right:10px;top:12px">Show</button>
+        <button type="button" class="toggle-link" id="toggleSuPass" style="position:absolute;right:14px;top:16px;font-weight:600">Show</button>
       </div>
 
       <label for="suConfirm">Confirm Password</label>
       <div style="position:relative">
         <input id="suConfirm" type="password" placeholder="Re-enter password" required />
-        <button type="button" class="toggle-link" id="toggleSuConfirm" style="position:absolute;right:10px;top:12px">Show</button>
+        <button type="button" class="toggle-link" id="toggleSuConfirm" style="position:absolute;right:14px;top:16px;font-weight:600">Show</button>
       </div>
 
       <div class="pw-meter" aria-hidden><i id="suPwBar" style="width:0%"></i></div>
@@ -136,7 +418,7 @@
       <label for="siPassword">Password</label>
       <div style="position:relative">
         <input id="siPassword" type="password" placeholder="Your password" required />
-        <button type="button" class="toggle-link" id="toggleSiPass" style="position:absolute;right:10px;top:12px">Show</button>
+        <button type="button" class="toggle-link" id="toggleSiPass" style="position:absolute;right:14px;top:16px;font-weight:600">Show</button>
       </div>
 
       <div class="row">
@@ -272,7 +554,7 @@ function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
 function showMessage(areaEl, type, text){ areaEl.innerHTML = `<div class="msg ${type==='error'?'error':'success'}">${text}</div>`; }
 
 /* Sign-up */
-signupForm.addEventListener('submit', (ev) => {
+signupForm.addEventListener('submit', async (ev) => {
   ev.preventDefault(); signupMsg.innerHTML = '';
 
   const name = (suName.value || '').trim();
@@ -286,25 +568,33 @@ signupForm.addEventListener('submit', (ev) => {
   if (!password || password.length < 8) { showMessage(signupMsg,'error','Password must be at least 8 characters.'); return; }
   if (password !== confirm) { showMessage(signupMsg,'error','Passwords do not match.'); return; }
 
-  const users = getUsers();
-  if (users.some(u => u.email && u.email.toLowerCase() === email)) {
-    showMessage(signupMsg,'error','An account with this email already exists. Please sign in.');
-    return;
+  try {
+    const response = await fetch('http://localhost:5000/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Store token in localStorage
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('currentUser', JSON.stringify(data.user));
+
+      showMessage(signupMsg,'success','Account created successfully. Redirecting...');
+      setTimeout(() => { location.href = 'dashboard.html'; }, 650);
+    } else {
+      const errorText = data.message || `Server responded with status ${response.status}.`;
+      showMessage(signupMsg, 'error', `Signup failed: ${errorText}`);
+    }
+  } catch (error) {
+    showMessage(signupMsg, 'error', `Network Error: Could not connect to the server. Please ensure the backend is running on http://localhost:5000.`);
   }
-
-  const user = { id: Math.random().toString(36).slice(2), name, email, password, note, createdAt: new Date().toISOString() };
-  users.push(user);
-  saveUsers(users);
-
-  // set current user (object with id and email)
-  setCurrent({ id: user.id, email: user.email, name: user.name });
-
-  // show salary step for this signup
-  showSalaryFor(email);
 });
 
 /* Sign-in */
-signinForm.addEventListener('submit', (ev) => {
+signinForm.addEventListener('submit', async (ev) => {
   ev.preventDefault(); signinMsg.innerHTML = '';
 
   const email = (siEmail.value || '').trim().toLowerCase();
@@ -312,14 +602,29 @@ signinForm.addEventListener('submit', (ev) => {
 
   if (!email || !password) { showMessage(signinMsg,'error','Please enter email and password.'); return; }
 
-  const users = getUsers();
-  const user = users.find(u => u.email && u.email.toLowerCase() === email && u.password === password);
-  if (!user) { showMessage(signinMsg,'error','Invalid email or password.'); return; }
+  try {
+    const response = await fetch('http://localhost:5000/api/auth/signin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
 
-  // success: set current and go to dashboard
-  setCurrent({ id: user.id, email: user.email, name: user.name });
-  showMessage(signinMsg,'success','Signed in. Redirecting to dashboard...');
-  setTimeout(()=> { location.href = 'dashboard.html'; }, 650);
+    const data = await response.json();
+
+    if (response.ok) {
+      // Store token in localStorage
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('currentUser', JSON.stringify(data.user));
+
+      showMessage(signinMsg,'success','Signed in. Redirecting to dashboard...');
+      setTimeout(() => { location.href = 'dashboard.html'; }, 650);
+    } else {
+      const errorText = data.message || `Server responded with status ${response.status}.`;
+      showMessage(signinMsg, 'error', `Sign-in failed: ${errorText}`);
+    }
+  } catch (error) {
+    showMessage(signinMsg, 'error', `Network Error: Could not connect to the server. Please ensure the backend is running on http://localhost:5000.`);
+  }
 });
 
 /* Salary submit */

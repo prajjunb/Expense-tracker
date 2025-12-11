@@ -1,22 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <title>Add Expense — Expense Tracker</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root {
-      --accent: #3f67e6;
-      --accent-dark: #2949c0;
-      --accent-light: #eef2ff;
-      --danger: #ff6b6b;
-      --success: #0b6e4f;
-      --muted: #6b7280;
       --bg: #f5f7fb;
-      --card: #fff;
-      --border: #e6e9ef;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --accent: #3f67e6;
+      --accent-soft: #e0e7ff;
+      --accent-dark: #2949c0;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --muted: #6b7280;
+      --text: #0b2340;
+      --text-soft: #9ca3af;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
       --radius: 12px;
-      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #020617;
+      --card: #0f172a;
+      --border: #1e293b;
+      --accent: #60a5fa;
+      --accent-soft: #0b1120;
+      --accent-dark: #2563eb;
+      --danger: #f97373;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --muted: #9ca3af;
+      --text: #e5e7eb;
+      --text-soft: #6b7280;
+      --shadow: 0 10px 40px rgba(15, 23, 42, 0.7);
     }
 
     * {
@@ -26,9 +46,11 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: #0b2340;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, rgba(96,165,250,0.18), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(139,92,246,0.18), transparent 55%),
+                  var(--bg);
+      color: var(--text);
       min-height: 100vh;
     }
 
@@ -42,7 +64,7 @@
       margin: 0 0 12px;
       font-size: 32px;
       font-weight: 700;
-      color: #0b2340;
+      color: var(--text);
     }
 
     a.link {
@@ -57,7 +79,7 @@
       font-weight: 600;
       display: block;
       margin-top: 14px;
-      color: #0b2340;
+      color: var(--text);
     }
 
     input[type=number],
@@ -71,7 +93,8 @@
       margin-top: 8px;
       font-size: 16px;
       font-family: inherit;
-      color: #0b2340;
+      color: var(--text);
+      background: var(--card);
       transition: all var(--transition);
     }
 
@@ -117,7 +140,7 @@
     }
 
     .btn.secondary {
-      background: var(--accent-light);
+      background: var(--accent-soft);
       color: var(--accent);
       font-weight: 600;
     }
@@ -127,19 +150,20 @@
     }
 
     .btn.danger {
-      background: #ffebe9;
-      color: #c53030;
+      background: rgba(239,68,68,0.15);
+      color: var(--danger);
     }
 
     .btn.danger:active {
-      background: #ffe0db;
+      background: rgba(239,68,68,0.25);
     }
 
     .card {
-      background: white;
+      background: var(--card);
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 4px 12px rgba(20, 30, 60, 0.08);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
       margin-bottom: 16px;
     }
 
@@ -158,7 +182,7 @@
     h3 {
       font-size: 20px;
       margin: 0 0 12px;
-      color: #0b2340;
+      color: var(--text);
       font-weight: 700;
     }
 
@@ -170,22 +194,22 @@
     }
 
     th {
-      background: linear-gradient(135deg, #f9fbff 0%, #f5f9ff 100%);
+      background: var(--accent-soft);
       padding: 12px;
       text-align: left;
       font-weight: 700;
-      color: #0b2340;
+      color: var(--text);
       border-bottom: 2px solid var(--border);
     }
 
     td {
       padding: 12px;
       border-bottom: 1px solid var(--border);
-      color: #0b2340;
+      color: var(--text);
     }
 
     tbody tr:hover {
-      background: rgba(63, 103, 230, 0.03);
+      background: var(--accent-soft);
     }
 
     .small {
@@ -201,7 +225,7 @@
     }
 
     .month-btn {
-      background: var(--accent-light);
+      background: var(--accent-soft);
       color: var(--accent);
       border: none;
       padding: 6px 12px;
@@ -226,11 +250,12 @@
     }
 
     .kpi {
-      background: linear-gradient(135deg, #f9fbff 0%, #f5f9ff 100%);
+      background: var(--card);
       border-radius: 10px;
       padding: 16px;
       text-align: center;
-      border: 1px solid var(--accent-light);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
     }
 
     .kpi-row {
@@ -244,7 +269,7 @@
       font-weight: 700;
       font-size: 20px;
       margin: 4px 0;
-      color: #0b2340;
+      color: var(--text);
     }
 
     .kpi .muted {
@@ -261,7 +286,7 @@
       top: 100%;
       left: 0;
       right: 0;
-      background: white;
+      background: var(--card);
       border: 1.5px solid var(--border);
       border-top: none;
       border-radius: 0 0 10px 10px;
@@ -269,7 +294,7 @@
       overflow-y: auto;
       z-index: 1000;
       display: none;
-      box-shadow: 0 4px 12px rgba(20, 30, 60, 0.08);
+      box-shadow: var(--shadow);
     }
 
     .category-suggestions.show {
@@ -281,10 +306,11 @@
       cursor: pointer;
       transition: background-color var(--transition);
       border-bottom: 1px solid var(--border);
+      color: var(--text);
     }
 
     .suggestion-item:hover {
-      background-color: var(--accent-light);
+      background-color: var(--accent-soft);
     }
 
     .suggestion-item:last-child {
@@ -292,7 +318,7 @@
     }
 
     .suggestion-item.add-new {
-      background: linear-gradient(135deg, #f9fbff 0%, #f5f9ff 100%);
+      background: var(--accent-soft);
       font-weight: 600;
       color: var(--accent);
     }
@@ -409,65 +435,108 @@
   // ============================================
   const EXPENSES_KEY = 'userExpenses';
   const CATEGORIES_KEY = 'userCategories';
+  const SETTINGS_KEY = 'userSettings';
+  const API_URL = 'http://localhost:5000/api';
   const DEFAULT_CATEGORIES = ['Food', 'Rent', 'Travel', 'Vehicle loan', 'Home loan', 'Education', 'Entertainment', 'Shopping', 'Utilities', 'Other'];
   
   let currentMonthFilter = 'current';
+
+  // ============================================
+  // THEME HANDLING
+  // ============================================
+  function applyTheme() {
+    const theme = localStorage.getItem("appTheme") || "light";
+    document.documentElement.setAttribute("data-theme", theme);
+  }
+  applyTheme();
 
   // ============================================
   // STORAGE MANAGER - LocalStorage Operations
   // ============================================
   
   class StorageManager {
-    static saveExpense(expense) {
+    static getHeaders() {
+      const token = localStorage.getItem('token');
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+    }
+
+    static async saveExpense(expense) {
       try {
-        let expenses = JSON.parse(localStorage.getItem(EXPENSES_KEY)) || [];
-        expenses.push(expense);
-        localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
-        return true;
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error("No login token found");
+
+        const res = await fetch(`${API_URL}/expenses`, {
+          method: 'POST',
+          headers: this.getHeaders(),
+          body: JSON.stringify(expense)
+        });
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        return await res.json();
       } catch (error) {
-        console.error('Error saving expense:', error);
-        throw error;
+        console.error('Error saving expense (falling back to local):', error);
+        // Fallback to LocalStorage so data is not lost
+        const list = JSON.parse(localStorage.getItem(EXPENSES_KEY)) || [];
+        const newExp = { ...expense, id: 'loc_' + Date.now(), _id: 'loc_' + Date.now() };
+        list.push(newExp);
+        localStorage.setItem(EXPENSES_KEY, JSON.stringify(list));
+        alert(`Saved locally only! (Server issue: ${error.message})`);
+        return newExp;
       }
     }
 
-    static loadExpenses() {
+    static async loadExpenses() {
       try {
-        return JSON.parse(localStorage.getItem(EXPENSES_KEY)) || [];
+        const res = await fetch(`${API_URL}/expenses`, {
+          headers: this.getHeaders()
+        });
+        if (!res.ok) return [];
+        return await res.json();
       } catch (e) {
         console.error('Error loading expenses:', e);
         return [];
       }
     }
 
-    static getCategories() {
+    static async getCategories() {
       try {
-        return JSON.parse(localStorage.getItem(CATEGORIES_KEY)) || DEFAULT_CATEGORIES;
+        // Endpoint might not exist, causing 404. Using defaults for now.
+        // const res = await fetch(`${API_URL}/settings/categories`, {
+        //   headers: this.getHeaders()
+        // });
+        // if (!res.ok) return DEFAULT_CATEGORIES;
+        // const data = await res.json();
+        // return data.categories && data.categories.length > 0 ? data.categories : DEFAULT_CATEGORIES;
+        return DEFAULT_CATEGORIES;
       } catch (error) {
         console.error('Error getting categories:', error);
         return DEFAULT_CATEGORIES;
       }
     }
 
-    static saveCategory(category) {
+    static async saveCategory(category) {
       try {
-        const categories = this.getCategories();
-        if (!categories.includes(category)) {
-          categories.push(category);
-          localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
-        }
-        return true;
+        const res = await fetch(`${API_URL}/settings/categories`, {
+          method: 'POST',
+          headers: this.getHeaders(),
+          body: JSON.stringify({ category })
+        });
+        return res.ok;
       } catch (error) {
         console.error('Error saving category:', error);
         return false;
       }
     }
 
-    static deleteExpense(expenseId) {
+    static async deleteExpense(expenseId) {
       try {
-        let expenses = JSON.parse(localStorage.getItem(EXPENSES_KEY)) || [];
-        expenses = expenses.filter(exp => exp.id !== expenseId);
-        localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
-        return true;
+        const res = await fetch(`${API_URL}/expenses/${expenseId}`, {
+          method: 'DELETE',
+          headers: this.getHeaders()
+        });
+        return res.ok;
       } catch (error) {
         console.error('Error deleting expense:', error);
         return false;
@@ -479,7 +548,15 @@
   // UI FUNCTIONS
   // ============================================
 
-  function saveExpense() {
+  function getSettings() {
+    try {
+      return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  async function saveExpense() {
     console.log('Save Expense clicked');
     const amount = Number(document.getElementById('amt').value);
     const category = document.getElementById('cat').value.trim();
@@ -498,23 +575,30 @@
     }
 
     try {
-      StorageManager.saveCategory(category);
+      const settings = getSettings();
+      const currency = settings.currency || 'INR';
+      
+      // Skip category save to prevent 404 errors if endpoint is missing
+      // await StorageManager.saveCategory(category);
 
       const expense = {
-        id: Date.now(),
         amount,
         category,
         note,
-        date: new Date().toISOString()
+        description: note || `Expense for ${category}`,
+        title: category,
+        date: new Date().toISOString(),
+        currency,
+        type: 'expense'
       };
 
       console.log('Expense object:', expense);
-      const saved = StorageManager.saveExpense(expense);
+      const saved = await StorageManager.saveExpense(expense);
       console.log('Saved:', saved);
 
       clearForm();
-      loadExpenses(currentMonthFilter);
-      updateHighestExpenses();
+      await loadExpenses(currentMonthFilter);
+      await updateHighestExpenses();
       alert('✓ Expense saved successfully!');
     } catch (error) {
       console.error('Error saving expense:', error);
@@ -527,6 +611,23 @@
     document.getElementById('cat').value = '';
     document.getElementById('note').value = '';
     hideCategorySuggestions();
+  }
+
+  function checkScannedExpense() {
+    const raw = localStorage.getItem('scannedExpense');
+    if (raw) {
+      try {
+        const data = JSON.parse(raw);
+        if (data.amount) document.getElementById('amt').value = data.amount;
+        if (data.category) {
+           document.getElementById('cat').value = data.category;
+        }
+        document.getElementById('note').value = "Scanned Receipt";
+        localStorage.removeItem('scannedExpense');
+      } catch(e) {
+        console.error(e);
+      }
+    }
   }
 
   function toggleMonth(period) {
@@ -546,9 +647,9 @@
     loadExpenses(period);
   }
 
-  function loadExpenses(period) {
+  async function loadExpenses(period) {
     try {
-      const expenses = StorageManager.loadExpenses();
+      const expenses = await StorageManager.loadExpenses();
       const now = new Date();
       const currentMonth = now.getMonth();
       const currentYear = now.getFullYear();
@@ -589,7 +690,7 @@
           <td style="font-weight: 700; color: var(--accent);">₹${exp.amount.toLocaleString('en-IN')}</td>
           <td>${dateStr}</td>
           <td>${timeStr}</td>
-          <td><button class="btn secondary" style="padding: 4px 8px; font-size: 12px;" onclick="deleteExpenseHandler(${exp.id})">Delete</button></td>
+          <td><button class="btn secondary" style="padding: 4px 8px; font-size: 12px;" onclick="deleteExpenseHandler('${exp._id || exp.id}')">Delete</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -599,12 +700,12 @@
     }
   }
 
-  function deleteExpenseHandler(id) {
+  async function deleteExpenseHandler(id) {
     if (confirm('Delete this expense?')) {
       try {
-        StorageManager.deleteExpense(id);
-        loadExpenses(currentMonthFilter);
-        updateHighestExpenses();
+        await StorageManager.deleteExpense(id);
+        await loadExpenses(currentMonthFilter);
+        await updateHighestExpenses();
       } catch (error) {
         console.error('Error deleting expense:', error);
         alert('Error deleting expense. Please try again.');
@@ -612,9 +713,9 @@
     }
   }
 
-  function updateHighestExpenses() {
+  async function updateHighestExpenses() {
     try {
-      const expenses = StorageManager.loadExpenses();
+      const expenses = await StorageManager.loadExpenses();
       const now = new Date();
       const currentMonth = now.getMonth();
       const currentYear = now.getFullYear();
@@ -648,13 +749,13 @@
   // CATEGORY AUTOCOMPLETE
   // ============================================
 
-  function showCategorySuggestions() {
+  async function showCategorySuggestions() {
     const input = document.getElementById('cat');
     const suggestionsDiv = document.getElementById('categorySuggestions');
     const inputValue = input.value.trim().toLowerCase();
 
     try {
-      const categories = StorageManager.getCategories();
+      const categories = await StorageManager.getCategories();
       
       let filtered = categories;
       if (inputValue) {
@@ -703,10 +804,10 @@
     hideCategorySuggestions();
   }
 
-  function addNewCategory(category) {
+  async function addNewCategory(category) {
     const trimmed = category.trim();
     if (trimmed) {
-      StorageManager.saveCategory(trimmed);
+      await StorageManager.saveCategory(trimmed);
       selectCategory(trimmed);
     }
   }
@@ -728,10 +829,11 @@
   // INITIALIZE
   // ============================================
 
-  window.addEventListener('load', () => {
+  window.addEventListener('load', async () => {
     try {
-      loadExpenses('current');
-      updateHighestExpenses();
+      checkScannedExpense();
+      await loadExpenses('current');
+      await updateHighestExpenses();
     } catch (error) {
       console.error('Error initializing page:', error);
     }
