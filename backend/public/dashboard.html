@@ -1321,7 +1321,7 @@
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/auth/me', {
+      const response = await fetch('/auth/...'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -1358,7 +1358,7 @@
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch('http://localhost:5000/api/settings', {
+      const response = await fetch('/auth/...')', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -1533,7 +1533,7 @@
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/profile', {
+      const response = await fetch('/auth/...'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1586,7 +1586,7 @@
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/profile', {
+      const response = await fetchfetch('/auth/...'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1677,7 +1677,7 @@
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/profile', {
+      const response = await fetch('/auth/...'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1733,7 +1733,7 @@
     try {
       const token = localStorage.getItem('token');
       if (token) {
-        await fetch('http://localhost:5000/api/auth/logout', {
+        await fetch('/auth/...') {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`
